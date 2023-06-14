@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from 'axios';
+import {Table} from "reactstrap";
 
 class Home extends React.Component {
   constructor(props){
@@ -23,8 +24,29 @@ class Home extends React.Component {
   render() {
     const {data}=this.state;
     return (<>
+    {this.state.data && (<><Table>
+  <thead>
+    <tr><th>S.No.</th>
+    <th>Artist</th>
+    <th>Gender</th></tr>
+  </thead>
+  <tbody>
+  
+  {this.state.data.map((item,index)=>
+    (
 
-    {this.state.data && this.state.data.map(item=>(<div key ={item.ConstituentId}>{item.DisplayName}</div>))}</>);
+    <tr key={item.ConstituentId}>
+      <td>{index+1}</td>
+      <td>{item.DisplayName}</td>
+      <td>{item.ArtistBio}</td>
+      {console.log("Inside td", item.DisplayName)}
+    </tr>))
+    }
+  </tbody>
+</Table></>)}
+
+</>)
+    
   }
 }
 
