@@ -1,52 +1,107 @@
 import React, { Component } from "react";
-import axios from 'axios';
-import {Table} from "reactstrap";
-
+import axios from "axios";
+import { Button, Card, CardBody, CardHeader, Col, Table } from "reactstrap";
+import { Row } from "reactstrap";
+import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 class Home extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
-      data:null,
-    }
+    this.state = {
+      data: [],
+
+      displayName: "",
+    };
   }
 
-  componentDidMount(){
-    axios.get('http://localhost:8081/')
-    .then(res=>{
-      this.setState({data:res.data});
-    console.log("this.state.data",this.state.data);}
-      )
-    .catch(error=>{
-      console.error('Error fetching data',error)}
-      );
+  componentDidMount() {
+    axios
+      .get("http://localhost:8081/")
+      .then((res) => {
+        this.setState({ data: res.data });
+
+        res.data = res.data.map((e) => {
+          return {
+            constituentId: e.ConstituentId,
+            displayName: e.DisplayName,
+            atistBio: e.ArtistBio,
+            Nationality: e.Nationality,
+            gender: e.Gender,
+            beginDate: e.BeginDate,
+            endDate: e.eEndDate,
+            wikiQid: e.WikiQid,
+            ulan: e.Ulan,
+          };
+        });
+        console.log("this.state.data", this.state.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data", error);
+      });
   }
 
+  handleDelete = (item, e) => {
+    e.preventDefault();
+    axios
+      .delete(`http://localhost:8081/${item.ConstituentId}`)
+      .then((res) => {
+        console.log("Deleted", res);
+      })
+      .catch((error) => {
+        console.error("Error Deleting data", error);
+      });
+  };
   render() {
-    const {data}=this.state;
-    return (<>
-    {this.state.data && (<><Table>
-  <thead>
-    <tr><th>S.No.</th>
-    <th>Artist</th>
-    <th>Gender</th></tr>
-  </thead>
-  <tbody>
-  
-  {this.state.data.map((item,index)=>
-    (
-
-    <tr key={item.ConstituentId}>
-      <td>{index+1}</td>
-      <td>{item.DisplayName}</td>
-      <td>{item.ArtistBio}</td>
-      {console.log("Inside td", item.DisplayName)}
-    </tr>))
-    }
-  </tbody>
-</Table></>)}
-
-</>)
-    
+    const { data } = this.state;
+    return (
+      <>
+        <Card>
+          <CardHeader>Artists</CardHeader>
+          <CardBody>
+            <Row>
+              <Col auto></Col>
+              <Col sm="3">
+                <Link to={{ pathname: "/addArtist", state: { data: null } }}>
+                  <Button>Add</Button>
+                </Link>
+              </Col>
+            </Row>
+            {this.state.data && (
+              <>
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>S.No.</th>
+                      <th>Artist</th>
+                      <th>Gender</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {this.state.data.map((item, index) => (
+                      <tr key={item.ConstituentId}>
+                        <td>{index + 1}</td>
+                        <td>{item.DisplayName}</td>
+                        <td>{item.ArtistBio}</td>
+                        <td>
+                          <Button
+                            onClick={(e) => {
+                              this.handleDelete(item, e);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </>
+            )}
+          </CardBody>
+        </Card>
+      </>
+    );
   }
 }
 
