@@ -432,7 +432,7 @@ class ArtistForm extends React.Component {
                     // )
                     {
                       axios
-                        .post("https://localhost:8081/artist", {
+                        .post("https://localhost:8081/artist/create", {
                           displayName: this.state.displayName,
                           artistBio: this.state.artistBio,
                           nationality: this.state.nationality,

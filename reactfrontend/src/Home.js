@@ -16,7 +16,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8081/")
+      .get("http://localhost:8081/artist")
       .then((res) => {
         this.setState({ data: res.data });
 
@@ -44,7 +44,7 @@ class Home extends React.Component {
   handleDelete = (item, e) => {
     e.preventDefault();
     axios
-      .delete(`http://localhost:8081/${item.constituentId}`)
+      .delete(`http://localhost:8081/artist/delete/${item.constituentId}`)
       .then((res) => {
         console.log("Deleted", res);
       })
