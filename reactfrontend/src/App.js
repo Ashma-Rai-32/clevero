@@ -1,16 +1,21 @@
 import logo from "./logo.svg";
 import "./App.css";
-import Home from "./Home";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Artist from "./Pages/Artist";
 import ArtistForm from "./Form/ArtistForm";
+import Artwork from "./Pages/Artwork";
+import ArtworkForm from "./Form/ArtworkForm";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/addArtist" element={<ArtistForm />} />
+          <Route path="/" element={<Navigate replace to="/artwork" />} />
+          <Route path="/artist" element={<Artist />} />
+          <Route path="/artistForm" element={<ArtistForm />} />
+          <Route path="/artwork" element={<Artwork />} />
+          <Route path="/artworkForm" element={<ArtworkForm />} />
         </Routes>
       </BrowserRouter>
     </>

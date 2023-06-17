@@ -4,7 +4,7 @@ import { Button, Card, CardBody, CardHeader, Col, Table } from "reactstrap";
 import { Row } from "reactstrap";
 import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
-class Home extends React.Component {
+class Artwork extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,7 +16,7 @@ class Home extends React.Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8081/artist")
+      .get("http://localhost:8081/artwork")
       .then((res) => {
         this.setState({ data: res.data });
 
@@ -44,7 +44,7 @@ class Home extends React.Component {
   handleDelete = (item, e) => {
     e.preventDefault();
     axios
-      .delete(`http://localhost:8081/artist/delete/${item.constituentId}`)
+      .delete(`http://localhost:8081/artwork/delete/${item.constituentId}`)
       .then((res) => {
         console.log("Deleted", res);
       })
@@ -73,7 +73,7 @@ class Home extends React.Component {
                   <thead>
                     <tr>
                       <th>S.No.</th>
-                      <th>Artist</th>
+                      <th>Artwork</th>
                       <th>Gender</th>
                       <th>Actions</th>
                     </tr>
@@ -106,4 +106,4 @@ class Home extends React.Component {
   }
 }
 
-export default Home;
+export default Artwork;

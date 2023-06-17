@@ -21,7 +21,7 @@ import {
 import axios from "axios";
 import Datetime from "react-datetime";
 import moment from "moment";
-class ArtistForm extends React.Component {
+class ArtworkForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -432,7 +432,7 @@ class ArtistForm extends React.Component {
                     // )
                     {
                       axios
-                        .post("http://localhost:8081/artist", {
+                        .post("https://localhost:8081/artist/create", {
                           displayName: this.state.displayName,
                           artistBio: this.state.artistBio,
                           nationality: this.state.nationality,
@@ -468,4 +468,4 @@ class ArtistForm extends React.Component {
   }
 }
 
-export default ArtistForm;
+export default ArtworkForm;

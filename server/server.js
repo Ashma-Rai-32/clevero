@@ -13,15 +13,17 @@ const db = mysql.createConnection({
   database: "artdb",
 });
 
+// ***********ARTIST HTTP METHODS***********
+
 app.get("/artist", (req, res) => {
   const sql = "select * from artist";
   db.query(sql, (err, result) => {
-    if (err) return res.json({ Message: "Server Error" });
+    if (err) return res.json({ Message: "SERVER ERROR" });
     return res.json(result);
   });
 });
 
-app.post("/artist/create", (req, res) => {
+app.post("/artist", (req, res) => {
   const sql =
     "INSERT INTO artist (`DisplayName`, `ArtistBio`, `Nationality`, `Gender`, `BeginDate`, `EndDate`, `WikiQid`, `Ulan`) VALUES (?)";
   const values = [
@@ -41,7 +43,7 @@ app.post("/artist/create", (req, res) => {
   });
 });
 
-app.put("/artist/update/:id", (req, res) => {
+app.put("/artist/:id", (req, res) => {
   const sql =
     "UPDATE `artist` SET `DisplayName`=?,`ArtistBio`=?,`Nationality`=?,`Gender`=?,`BeginDate`=?,`EndDate`=?,`WikiQid`=?,`Ulan`=? WHERE ConstituentId=?";
   const id = req.params.id;
@@ -66,11 +68,75 @@ app.put("/artist/update/:id", (req, res) => {
   );
 });
 
-app.delete("/artist/delete/:id", (req, res) => {
+app.delete("/artist/:id", (req, res) => {
   const sql = "DELETE FROM `artist` WHERE ConstituentId =?";
   const id = req.params.id;
   db.query(sql, [id], (err, result) => {
-    if (err) return res.json({ Message: "Server Error" });
+    if (err) return res.json({ Message: "SERVER ERROR" });
+    return res.json(result);
+  });
+});
+
+// ***********ARTWORK HTTP METHODS***********
+
+app.get("/artwork", (req, res) => {
+  const sql = "select * from artwork";
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ Message: "SERVER ERROR" });
+    return res.json(result);
+  });
+});
+
+app.post("/artwork/create", (req, res) => {
+  const sql =
+    "INSERT INTO artwork (`DisplayName`, `ArtistBio`, `Nationality`, `Gender`, `BeginDate`, `EndDate`, `WikiQid`, `Ulan`) VALUES (?)";
+  const values = [
+    req.body.displayName,
+    req.body.artworkBio,
+    req.body.nationality,
+    req.body.gender,
+    req.body.beginDate,
+    req.body.endDate,
+    req.body.wikiQid,
+    req.body.ulan,
+  ];
+
+  db.query(sql, [values], (err, result) => {
+    if (err) return res.json(err);
+    return res.json(result);
+  });
+});
+
+app.put("/artwork/update/:id", (req, res) => {
+  const sql =
+    "UPDATE `artwork` SET `DisplayName`=?,`ArtistBio`=?,`Nationality`=?,`Gender`=?,`BeginDate`=?,`EndDate`=?,`WikiQid`=?,`Ulan`=? WHERE ConstituentId=?";
+  const id = req.params.id;
+
+  db.query(
+    sql,
+    [
+      req.body.displayName,
+      req.body.artworkBio,
+      req.body.nationality,
+      req.body.gender,
+      req.body.beginDate,
+      req.body.endDate,
+      req.body.wikiQid,
+      req.body.ulan,
+      id,
+    ],
+    (err, result) => {
+      if (err) return res.json(err);
+      return res.json(result);
+    }
+  );
+});
+
+app.delete("/artwork/delete/:id", (req, res) => {
+  const sql = "DELETE FROM `artwork` WHERE ConstituentId =?";
+  const id = req.params.id;
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.json({ Message: "SERVER ERROR" });
     return res.json(result);
   });
 });
