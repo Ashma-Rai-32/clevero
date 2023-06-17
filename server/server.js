@@ -16,7 +16,7 @@ const db = mysql.createConnection({
 app.get("/", (req, res) => {
   const sql = "select * from artist";
   db.query(sql, (err, result) => {
-    if (err) return res.json({ Message: "Error in server" });
+    if (err) return res.json({ Message: "Server Error" });
     return res.json(result);
   });
 });
@@ -41,10 +41,11 @@ app.post("/artist", (req, res) => {
   });
 });
 
-app.delete("/", (req, res) => {
-  const sql = "select * from artist";
-  db.query(sql, (err, result) => {
-    if (err) return res.json({ Message: "Error in server" });
+app.delete("/:id", (req, res) => {
+  const sql = "DELETE FROM `artist` WHERE ConstituentId =?";
+  const id = req.params.id;
+  db.query(sql, [id], (err, result) => {
+    if (err) return res.json({ Message: "Server Error" });
     return res.json(result);
   });
 });

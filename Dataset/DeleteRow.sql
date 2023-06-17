@@ -1,0 +1,1 @@
+DELETE FROM `artist` WHERE ConstituentId =3;

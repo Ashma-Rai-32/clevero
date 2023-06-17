@@ -24,8 +24,8 @@ class Home extends React.Component {
           return {
             constituentId: e.ConstituentId,
             displayName: e.DisplayName,
-            atistBio: e.ArtistBio,
-            Nationality: e.Nationality,
+            artistBio: e.ArtistBio,
+            nationality: e.Nationality,
             gender: e.Gender,
             beginDate: e.BeginDate,
             endDate: e.eEndDate,
@@ -33,6 +33,7 @@ class Home extends React.Component {
             ulan: e.Ulan,
           };
         });
+        this.setState({ data: res.data });
         console.log("this.state.data", this.state.data);
       })
       .catch((error) => {
@@ -43,7 +44,7 @@ class Home extends React.Component {
   handleDelete = (item, e) => {
     e.preventDefault();
     axios
-      .delete(`http://localhost:8081/${item.ConstituentId}`)
+      .delete(`http://localhost:8081/${item.constituentId}`)
       .then((res) => {
         console.log("Deleted", res);
       })
@@ -52,7 +53,7 @@ class Home extends React.Component {
       });
   };
   render() {
-    const { data } = this.state;
+    // const { data } = this.state;
     return (
       <>
         <Card>
@@ -79,10 +80,10 @@ class Home extends React.Component {
                   </thead>
                   <tbody>
                     {this.state.data.map((item, index) => (
-                      <tr key={item.ConstituentId}>
+                      <tr key={item.constituentId}>
                         <td>{index + 1}</td>
-                        <td>{item.DisplayName}</td>
-                        <td>{item.ArtistBio}</td>
+                        <td>{item.displayName}</td>
+                        <td>{item.artistBio}</td>
                         <td>
                           <Button
                             onClick={(e) => {

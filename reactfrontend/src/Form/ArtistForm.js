@@ -31,7 +31,7 @@ class ArtistForm extends React.Component {
       artistBio: "",
       nationality: "",
       gender: "",
-      beginDate: "",
+      beginDate: null,
       endDate: "",
       wikiQid: "",
       ulan: "",
@@ -81,7 +81,14 @@ class ArtistForm extends React.Component {
   };
 
   render() {
-    console.log("this.props.location.state:", this.state);
+    console.log("this.state.displayName:", this.state.displayName);
+    console.log("this.state.artistBio:", this.state.artistBio);
+    console.log("this.state.nationality:", this.state.nationality);
+    console.log("this.state.gender:", this.state.gender);
+    console.log("this.state.beginDate:", this.state.beginDate);
+    console.log("this.state.endDate:", this.state.endDate);
+    console.log("this.state.wikiQid:", this.state.wikiQid);
+    console.log("this.state.ulan:", this.state.ulan);
 
     return (
       <div>
@@ -107,10 +114,11 @@ class ArtistForm extends React.Component {
                 maxLength={60}
                 defaultValue={this.state.displayName}
                 onChange={(e) => {
-                  //   this.setState({displayName:e.target.value});
+                  this.setState({ displayName: e.target.value });
                   //   if(e.target.value!==this.state.location.displayName)
                   // }}
-                  if (e.target.value === "" || !this.handleTextValidation()) {
+                  // if (e.target.value === "" || !this.handleTextValidation()) {
+                  if (e.target.value === "") {
                     this.setState({ checkDisplayName: "invalid" });
                   } else {
                     this.setState({ checkDisplayName: "valid" });
@@ -138,10 +146,10 @@ class ArtistForm extends React.Component {
                 maxLength={60}
                 defaultValue={this.state.artistBio}
                 onChange={(e) => {
-                  //   this.setState({artistBio:e.target.value});
+                  this.setState({ artistBio: e.target.value });
                   //   if(e.target.value!==this.state.location.artistBio)
                   // }}
-                  if (e.target.value === "" || !this.handleTextValidation()) {
+                  if (e.target.value === "") {
                     this.setState({ checkArtistBio: "invalid" });
                   } else {
                     this.setState({ checkArtistBio: "valid" });
@@ -171,10 +179,10 @@ class ArtistForm extends React.Component {
                   maxLength={60}
                   defaultValue={this.state.nationality}
                   onChange={(e) => {
-                    //   this.setState({nationality:e.target.value});
+                    this.setState({ nationality: e.target.value });
                     //   if(e.target.value!==this.state.location.nationality)
                     // }}
-                    if (e.target.value === "" || !this.handleTextValidation()) {
+                    if (e.target.value === "") {
                       this.setState({ checkNationality: "invalid" });
                     } else {
                       this.setState({ checkNationality: "valid" });
@@ -240,9 +248,11 @@ class ArtistForm extends React.Component {
                     Begin Date
                   </label>
                   <InputGroup className="input-group-alternative">
-                    <InputGroupAddon addonType="prepend">
-                      {/* <InputGroupText></InputGroupText> */}
-                    </InputGroupAddon>
+                    {/* <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="ni ni-calendar-grid-58" />
+                      </InputGroupText>
+                    </InputGroupAddon> */}
                     {/* //datetime */}
                     <Datetime
                       inputProps={{
@@ -270,6 +280,45 @@ class ArtistForm extends React.Component {
 
               {/* EndDate */}
               <Col lg="6">
+                <FormGroup>
+                  <label className="form-control-label" htmlFor="endDate">
+                    End Date
+                  </label>
+                  <InputGroup className="input-group-alternative">
+                    {/* <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="ni ni-calendar-grid-58" />
+                      </InputGroupText>
+                    </InputGroupAddon> */}
+                    {/* //datetime */}
+                    <Datetime
+                      inputProps={{
+                        placeholder: this.state.endDatePlaceholder,
+                      }}
+                      closeOnSelect={true}
+                      dateFormat="YYYY-MM-DD"
+                      timeFormat={false}
+                      utc={true}
+                      value={this.state.endDate}
+                      isInvalid={this.state.checkEndDate === "invalid"}
+                      onChange={(e) => {
+                        this.setState({ endDate: moment(e).format() });
+                        if (moment(e).format() === null) {
+                          this.setState({ checkEndDate: "invalid" });
+                        } else this.setState({ checkEndDate: "valid" });
+                      }}
+                    />
+                  </InputGroup>
+                  <div className="invalid-feedback">
+                    Please provide valid end date
+                  </div>
+                </FormGroup>
+                {console.log(
+                  "begin and enddate ",
+                  this.state.beginDate,
+                  this.state.endDate
+                )}
+
                 <FormGroup>
                   <label className="form-control-label" htmlFor="endDate">
                     End Date
@@ -302,6 +351,7 @@ class ArtistForm extends React.Component {
             </Row>
 
             <Row className="pt-2">
+              {/* Wiki QID */}
               <Col lg="6">
                 <FormGroup>
                   <label className="form-control-label" htmlFor="wikiQid">
@@ -316,7 +366,7 @@ class ArtistForm extends React.Component {
                   maxLength={60}
                   defaultValue={this.state.wikiQid}
                   onChange={(e) => {
-                    //   this.setState({wikiQid:e.target.value});
+                    this.setState({ wikiQid: e.target.value });
                     //   if(e.target.value!==this.state.location.wikiQid)
                     // }}
                     if (e.target.value === "" || !this.handleTextValidation()) {
@@ -342,13 +392,13 @@ class ArtistForm extends React.Component {
                 </FormGroup>
                 <Input
                   id="ulan"
-                  placeholder="E1223249"
-                  type="text"
+                  placeholder="e.g. 51223249"
+                  type="number"
                   required
                   maxLength={60}
                   defaultValue={this.state.ulan}
                   onChange={(e) => {
-                    //   this.setState({ulan:e.target.value});
+                    this.setState({ ulan: e.target.value });
                     //   if(e.target.value!==this.state.location.ulan)
                     // }}
                     if (e.target.value === "" || !this.handleTextValidation()) {
