@@ -87,18 +87,33 @@ app.get("/artwork", (req, res) => {
   });
 });
 
-app.post("/artwork/create", (req, res) => {
+app.post("/artwork", (req, res) => {
   const sql =
-    "INSERT INTO artwork (`DisplayName`, `ArtistBio`, `Nationality`, `Gender`, `BeginDate`, `EndDate`, `WikiQid`, `Ulan`) VALUES (?)";
+    "INSERT INTO `artwork`(`Title`, `ConstituentId`, `Date`, `Medium`, `Dimensions`, `CreditLine`, `AccessionNumber`, `Classification`, `Department`, `DateAcquired`, `SeatHeight`, `Catalogued`, `ObjectId`, `Url`, `ThumbnailUrl`, `Circumference`, `Depth`, `Diameter`, `Height`, `Length`, `Weight`, `Width`, `Duration`) VALUES (?)";
   const values = [
-    req.body.displayName,
-    req.body.artworkBio,
-    req.body.nationality,
-    req.body.gender,
-    req.body.beginDate,
-    req.body.endDate,
-    req.body.wikiQid,
-    req.body.ulan,
+    req.body.title,
+    req.body.constituentId,
+    req.body.date,
+    req.body.medium,
+    req.body.dimensions,
+    req.body.creditLine,
+    req.body.accessionNumber,
+    req.body.classification,
+    req.body.department,
+    req.body.dateAcquired,
+    req.body.seatHeight,
+    req.body.catalogued,
+    req.body.objectId,
+    req.body.url,
+    req.body.thumbnailUrl,
+    req.body.circumference,
+    req.body.depth,
+    req.body.diameter,
+    req.body.height,
+    req.body.length,
+    req.body.weight,
+    req.body.width,
+    req.body.duration,
   ];
 
   db.query(sql, [values], (err, result) => {
@@ -107,7 +122,7 @@ app.post("/artwork/create", (req, res) => {
   });
 });
 
-app.put("/artwork/update/:id", (req, res) => {
+app.put("/artwork/:id", (req, res) => {
   const sql =
     "UPDATE `artwork` SET `DisplayName`=?,`ArtistBio`=?,`Nationality`=?,`Gender`=?,`BeginDate`=?,`EndDate`=?,`WikiQid`=?,`Ulan`=? WHERE ConstituentId=?";
   const id = req.params.id;
@@ -132,7 +147,7 @@ app.put("/artwork/update/:id", (req, res) => {
   );
 });
 
-app.delete("/artwork/delete/:id", (req, res) => {
+app.delete("/artwork/:id", (req, res) => {
   const sql = "DELETE FROM `artwork` WHERE ConstituentId =?";
   const id = req.params.id;
   db.query(sql, [id], (err, result) => {

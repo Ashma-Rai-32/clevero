@@ -1,0 +1,1 @@
+alter TABLE artwork DROP COLUMN `artwork`.`Artist`, DROP COLUMN `artwork`.`ArtistBio`, DROP COLUMN `artwork`.`Nationality`,DROP COLUMN `artwork`.`BeginDate`,DROP COLUMN `artwork`.`EndDate`,DROP COLUMN `artwork`.`Gender`;
