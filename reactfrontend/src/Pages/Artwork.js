@@ -15,6 +15,139 @@ import { Link } from "react-router-dom";
 import { Container } from "reactstrap";
 import moment from "moment";
 
+const ManageTable = (props) => {
+  const data = props.state;
+  console.log("state.data inside maanga", data);
+  const navigate = useNavigate();
+
+  const handleView = (item) => {
+    // e.preventDefault();
+    // const navigate = useNavigate();
+    navigate("/artworkView", { state: { item: item } });
+    console.log("handleView", item);
+    // const state = { item };
+    // history.push({
+    //   pathname: "/artworkView",
+    //   state: state,
+    // });
+    // return <Navigate to="/artworkView" state={item} props={item} />;
+  };
+
+  const handleDelete = (item, e) => {
+    e.preventDefault();
+    axios
+      .delete(`http://localhost:8081/artwork/${item.artworkId}`)
+      .then((res) => {
+        console.log("Deleted", res);
+      })
+      .catch((error) => {
+        console.error("Error Deleting data", error);
+      });
+  };
+
+  return (
+    <Row className="p-3" style={{ overflowX: "auto", marginBottom: "10px" }}>
+      <div
+        style={{
+          width: "max-content",
+          overflowX: "auto",
+          marginBottom: "-16px",
+        }}
+      >
+        {data && (
+          <>
+            <Table responsive="true">
+              <thead>
+                <tr>
+                  <th>S.N.</th>
+                  <th style={{ width: "20%" }}>Title</th>
+
+                  <th>Artist</th>
+                  <th className="hidden">URL</th>
+                  <th style={{ width: "10%" }}>Thumbnail</th>
+                  <th className="hidden">Nationality</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item, index) => (
+                  // const id = item.artworkId;
+
+                  <>
+                    <tr key={item.artworkId}>
+                      <th scope="row">{index + 1}</th>
+                      <td>{item.title}</td>
+                      <td>{item.displayName}</td>
+                      <td className="hidden">
+                        <Badge
+                          color="info"
+                          href={item.url}
+                          target="_blank"
+                          pill
+                        >
+                          Link
+                        </Badge>
+                      </td>
+                      <td>
+                        <img
+                          src={item.thumbnailUrl}
+                          // alt={item.thumbnailUrl}
+                          width="100%"
+                          height="auto"
+                        />
+                      </td>
+                      <td className="hidden">{item.nationality}</td>
+                      <td>{moment(item.date).format("MMM YYYY")}</td>
+                      <td>
+                        <Row>
+                          <Col className="p-1 px-2 ">
+                            <Button
+                              color="primary"
+                              style={{ width: "100%" }}
+                              onClick={() => {
+                                handleView(item);
+                              }}
+                            >
+                              View
+                            </Button>
+                          </Col>
+                          <Col className="p-1 px-2">
+                            <Button
+                              color="warning"
+                              style={{ width: "100%" }}
+                              onClick={(e) => {
+                                this.handleDelete(item, e);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          </Col>
+                          <Col className="p-1 px-2">
+                            <Button
+                              color="danger"
+                              style={{ width: "100%" }}
+                              onClick={(e) => {
+                                this.handleDelete(item, e);
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </Col>
+                        </Row>
+                      </td>
+                    </tr>
+                  </>
+                ))}
+              </tbody>
+            </Table>
+          </>
+        )}
+      </div>
+    </Row>
+  );
+};
+
 class Artwork extends React.Component {
   constructor(props) {
     super(props);
@@ -137,7 +270,8 @@ class Artwork extends React.Component {
               </Row>
             </CardHeader>
             <CardBody>
-              <Row
+              {this.state.data && <ManageTable state={this.state.data} />}
+              {/* <Row
                 className="p-3"
                 style={{ overflowX: "auto", marginBottom: "10px" }}
               >
@@ -233,7 +367,7 @@ class Artwork extends React.Component {
                     </>
                   )}
                 </div>
-              </Row>
+              </Row> */}
             </CardBody>
           </Card>
         </Container>
