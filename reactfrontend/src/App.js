@@ -5,6 +5,7 @@ import Artist from "./Pages/Artist";
 import ArtistForm from "./Form/ArtistForm";
 import Artwork from "./Pages/Artwork";
 import ArtworkForm from "./Form/ArtworkForm";
+import ArtworkView from "./View/ArtworkView";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/artistForm" element={<ArtistForm />} />
           <Route path="/artwork" element={<Artwork />} />
           <Route path="/artworkForm" element={<ArtworkForm />} />
+          <Route path="/artworkView" element={<ArtworkView />} />
         </Routes>
       </BrowserRouter>
     </>

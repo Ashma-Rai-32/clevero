@@ -56,6 +56,8 @@ class ArtistForm extends React.Component {
       ulanValidationError: "Please provide Full Name",
 
       //for dropdown
+      toggleOpenGender: false,
+
       genderName: "Select",
       // this.props.location.state.gender == null
       //   ? "Select Gender"
@@ -445,7 +447,7 @@ class ArtistForm extends React.Component {
                         })
                         .then((res) => {
                           if (res.status >= 200 && res.status < 300) {
-                            console.log("SUccess");
+                            console.log("Success");
                           } else {
                             console.log("Error creating artist");
                           }

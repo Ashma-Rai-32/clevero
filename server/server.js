@@ -6,11 +6,38 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// var http = require("http");
+
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
   database: "artdb",
+});
+
+// ***********ARTIST X ARTWORK HTTP METHODS***********
+
+app.get("/artistxartwork/", (req, res) => {
+  // const sql =
+  //   "SELECT * FROM `artistxartwork` artistxartworkObject right outer JOIN  `artist` artistObject on `ArtworkId`=? && artistxartworkObject.`ConstituentId`=artistObject.ConstituentId";
+
+  const sql =
+    "SELECT * FROM `artwork` LEFT JOIN `artistxartwork` ON `artwork`.ArtworkId = artistxartwork.ArtworkId LEFT JOIN artist ON `artistxartwork`.ConstituentId = artist.ConstituentId";
+
+  const artworkId = req.params.artworkId;
+  db.query(sql, [artworkId], (err, result) => {
+    if (err) return res.json({ Message: "SERVER ERROR" });
+    return res.json(result);
+  });
+});
+
+app.get("/artistDropDownData/", (req, res) => {
+  const sql = "SELECT `artist`.`ConstituentId`, `DisplayName` FROM `artist`";
+
+  db.query(sql, (err, result) => {
+    if (err) return res.json({ Message: "SERVER ERROR" });
+    return res.json(result);
+  });
 });
 
 // ***********ARTIST HTTP METHODS***********
@@ -80,7 +107,52 @@ app.delete("/artist/:id", (req, res) => {
 // ***********ARTWORK HTTP METHODS***********
 
 app.get("/artwork", (req, res) => {
-  const sql = "select * from artwork";
+  //   var artistData= http.request({host:'localhost',
+  // port:8081,
+  // path:'/artistxartwork/'+})
+  const sql = "SELECT `ArtworkId` FROM `artwork`";
+  var artworkIdArray = [];
+  artworkIdArray = db.query(sql, (err, result) => {
+    if (err) return res.json({ Message: "SERVER ERROR" });
+    return res.json(result);
+  });
+  console.log("artworkIdArray", artworkIdArray);
+  var output = [];
+  for (let index = 0; index < artworkIdArray.length; index++) {
+    const element = artworkIdArray[index];
+    const sql = "SELECT * FROM `artwork` where `ArtworkId`=?";
+    var artworkArray = db.query(sql, [element.ArtworkId], (err, result) => {
+      if (err) return res.json({ Message: "SERVER ERROR" });
+      return res.json(result);
+    });
+    console.log(artworkArray);
+
+    const sqlTemp =
+      "SELECT * FROM `artistxartwork` artistxartworkObject right outer JOIN  `artist` artistObject on `ArtworkId`=? && artistxartworkObject.`ConstituentId`=artistObject.ConstituentId";
+    var artistArray = db.query(sql, [element.ArtworkId], (err, result) => {
+      if (err) return res.json({ Message: "SERVER ERROR" });
+      return res.json(result);
+    });
+    output = output + json(artworkArray, artistArray);
+  }
+  return output;
+
+  artworkIdArray.forEach((e) => {
+    const sql = "SELECT * FROM `artwork` where `ArtworkId`=?";
+    var artworkArray = db.query(sql, [e.ArtworkId], (err, result) => {
+      if (err) return res.json({ Message: "SERVER ERROR" });
+      return res.json(result);
+    });
+
+    const sqlTemp =
+      "SELECT * FROM `artistxartwork` artistxartworkObject right outer JOIN  `artist` artistObject on `ArtworkId`=? && artistxartworkObject.`ConstituentId`=artistObject.ConstituentId";
+    var artistArray = db.query(sql, [e.ArtworkId], (err, result) => {
+      if (err) return res.json({ Message: "SERVER ERROR" });
+      return res.json(result);
+    });
+    output = output + json(artworkArray + artistArray);
+  });
+
   db.query(sql, (err, result) => {
     if (err) return res.json({ Message: "SERVER ERROR" });
     return res.json(result);
