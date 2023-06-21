@@ -83,7 +83,16 @@ const ManageTable = (props) => {
                     <tr key={item.artworkId}>
                       <th scope="row">{index + 1}</th>
                       <td>{item.title}</td>
-                      <td>{item.artistNames}</td>
+                      <td>
+                        <Link
+                          to={{
+                            pathname: "/artist",
+                            state: { id: item.ConstituentIds },
+                          }}
+                        >
+                          {item.artistNames}
+                        </Link>
+                      </td>
                       <td className="hidden">
                         <Badge
                           color="info"
@@ -214,48 +223,7 @@ class Artwork extends React.Component {
       .catch((error) => {
         console.error("Error fetching data", error);
       });
-    // axios
-    // .get("http://localhost:8081/artistxartwork/",this.state.)
-    // .then((res) => {
-
-    //   // res.data = res.data.map((e) => {
-    //   //   return {
-    //   //     displayName: e.displayName,
-
-    //   //   };
-    //   // });
-    //   this.setState({ artistData: res.data });
-    //   console.log("this.state.data", this.state.data);
-    // })
-    // .catch((error) => {
-    //   console.error("Error fetching data", error);
-    // });
   }
-
-  handleView = (item) => {
-    // e.preventDefault();
-    // const navigate = useNavigate();
-    // navigate("/artworkView", { state: { myData: "Hello!" } });
-    console.log("handleView", item);
-    const state = { item };
-    this.props.history.push({
-      pathname: "/artworkView",
-      state: state,
-    });
-    // return <Navigate to="/artworkView" state={item} props={item} />;
-  };
-
-  handleDelete = (item, e) => {
-    e.preventDefault();
-    axios
-      .delete(`http://localhost:8081/artwork/${item.artworkId}`)
-      .then((res) => {
-        console.log("Deleted", res);
-      })
-      .catch((error) => {
-        console.error("Error Deleting data", error);
-      });
-  };
 
   render() {
     // const { data } = this.state;
@@ -279,103 +247,6 @@ class Artwork extends React.Component {
             </CardHeader>
             <CardBody>
               {this.state.data && <ManageTable state={this.state.data} />}
-              {/* <Row
-                className="p-3"
-                style={{ overflowX: "auto", marginBottom: "10px" }}
-              >
-                <div
-                  style={{
-                    width: "max-content",
-                    overflowX: "auto",
-                    marginBottom: "-16px",
-                  }}
-                >
-                  {this.state.data && (
-                    <>
-                      <Table responsive="true">
-                        <thead>
-                          <tr>
-                            <th>S.N.</th>
-                            <th style={{ width: "20%" }}>Title</th>
-
-                            <th>Artist</th>
-                            <th className="hidden">URL</th>
-                            <th style={{ width: "10%" }}>Thumbnail</th>
-                            <th className="hidden">Nationality</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {this.state.data.map((item, index) => (
-                            // const id = item.artworkId;
-
-                            <>
-                              <tr key={item.artworkId}>
-                                <th scope="row">{index + 1}</th>
-                                <td>{item.title}</td>
-                                <td>{item.displayName}</td>
-                                <td className="hidden">
-                                  <Badge color="info" href={item.url} pill>
-                                    Link
-                                  </Badge>
-                                </td>
-                                <td>
-                                  <img
-                                    src={item.thumbnailUrl}
-                                    // alt={item.thumbnailUrl}
-                                    width="100%"
-                                    height="auto"
-                                  />
-                                </td>
-                                <td className="hidden">{item.nationality}</td>
-                                <td>{moment(item.date).format("MMM YYYY")}</td>
-                                <td>
-                                  <Row>
-                                    <Col className="p-1 px-2 ">
-                                      <Button
-                                        color="primary"
-                                        style={{ width: "100%" }}
-                                        onClick={() => {
-                                          this.handleView(item);
-                                        }}
-                                      >
-                                        View
-                                      </Button>
-                                    </Col>
-                                    <Col className="p-1 px-2">
-                                      <Button
-                                        color="warning"
-                                        style={{ width: "100%" }}
-                                        onClick={(e) => {
-                                          this.handleDelete(item, e);
-                                        }}
-                                      >
-                                        Edit
-                                      </Button>
-                                    </Col>
-                                    <Col className="p-1 px-2">
-                                      <Button
-                                        color="danger"
-                                        style={{ width: "100%" }}
-                                        onClick={(e) => {
-                                          this.handleDelete(item, e);
-                                        }}
-                                      >
-                                        Delete
-                                      </Button>
-                                    </Col>
-                                  </Row>
-                                </td>
-                              </tr>
-                            </>
-                          ))}
-                        </tbody>
-                      </Table>
-                    </>
-                  )}
-                </div>
-              </Row> */}
             </CardBody>
           </Card>
         </Container>

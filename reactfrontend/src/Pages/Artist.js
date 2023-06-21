@@ -1,30 +1,136 @@
 import React, { Component } from "react";
 import axios from "axios";
 import {
+  Badge,
   Button,
   Card,
   CardBody,
   CardHeader,
   Col,
-  Container,
   Table,
 } from "reactstrap";
 import { Row } from "reactstrap";
-import { NavLink } from "react-router-dom";
+import { NavLink, Navigate, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { Container } from "reactstrap";
+import moment from "moment";
 
-class Artist extends React.Component {
+const ManageTable = (props) => {
+  const data = props.state;
+  const navigate = useNavigate();
+
+  const handleView = (item) => {
+    navigate("/artistView", { state: { item: item } });
+    console.log("handleView", item);
+  };
+
+  const handleEdit = (item) => {
+    navigate("/artistForm", { state: item });
+    console.log("handleEdit", item);
+  };
+
+  const handleDelete = (item, e) => {
+    // e.preventDefault();
+    console.log("item", item);
+    axios
+      .delete(`http://localhost:8081/artist/${item.artistId}`)
+      .then((res) => {
+        console.log("Deleted", res);
+      })
+      .catch((error) => {
+        console.error("Error Deleting data", error);
+      });
+  };
+
+  return (
+    <Row className="p-3">
+      <div>
+        {data && (
+          <>
+            <Table responsive="true">
+              <thead>
+                <tr>
+                  <th>S.N.</th>
+                  <th>Artist</th>
+                  <th>Bio</th>
+                  <th>Gender</th>
+                  <th>Nationality</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item, index) => (
+                  // const id = item.artistId;
+
+                  <>
+                    <tr key={item.ConstituentId}>
+                      <th scope="row">{index + 1}</th>
+                      <td style={{ width: "20%" }}>{item.displayName}</td>
+                      <td>{item.artistBio}</td>
+
+                      <td className="hidden">
+                        {item.gender ? (
+                          <Badge color="info" target="_blank" pill>
+                            Male
+                          </Badge>
+                        ) : (
+                          <>
+                            <Badge color="danger" target="_blank" pill>
+                              Female
+                            </Badge>
+                          </>
+                        )}
+                      </td>
+
+                      <td className="hidden">{item.nationality}</td>
+                      <td>
+                        <Row>
+                          {/* <Col className="p-1 px-2 ">
+                            <Button
+                              color="primary"
+                              style={{ width: "100%" }}
+                              onClick={() => {
+                                handleView(item);
+                              }}
+                            >
+                              View
+                            </Button>
+                          </Col> */}
+                          <Col className="p-1 px-2">
+                            <Button
+                              color="warning"
+                              style={{ width: "100%" }}
+                              onClick={() => {
+                                handleEdit(item);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          </Col>
+                        </Row>
+                      </td>
+                    </tr>
+                  </>
+                ))}
+              </tbody>
+            </Table>
+          </>
+        )}
+      </div>
+    </Row>
+  );
+};
+
+class artist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-
-      displayName: "",
     };
   }
 
-  componentDidMount() {
-    axios
+  async componentDidMount() {
+    await axios
       .get("http://localhost:8081/artist")
       .then((res) => {
         this.setState({ data: res.data });
@@ -50,17 +156,6 @@ class Artist extends React.Component {
       });
   }
 
-  handleDelete = (item, e) => {
-    e.preventDefault();
-    axios
-      .delete(`http://localhost:8081/artist/${item.constituentId}`)
-      .then((res) => {
-        console.log("Deleted", res);
-      })
-      .catch((error) => {
-        console.error("Error Deleting data", error);
-      });
-  };
   render() {
     // const { data } = this.state;
     return (
@@ -70,9 +165,9 @@ class Artist extends React.Component {
             <CardHeader>
               <Row>
                 <Col md="10">
-                  <h1 className="p-3">ARTISTS</h1>
+                  <h1 className="p-3">Artists</h1>
                 </Col>
-                <Col className="p-3">
+                <Col className="p-3 d-flex align-items-center justify-content-center">
                   <Link to={{ pathname: "/artistForm", state: { data: null } }}>
                     <Button color="primary">Add Artists</Button>
                   </Link>
@@ -80,45 +175,7 @@ class Artist extends React.Component {
               </Row>
             </CardHeader>
             <CardBody>
-              <Row className="p-3">
-                {this.state.data && (
-                  <>
-                    <Table>
-                      <thead>
-                        <tr>
-                          <th>S.No.</th>
-                          <th>Artist</th>
-                          <th>Bio</th>
-                          <th>Nationality</th>
-
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.data.map((item, index) => (
-                          <tr key={item.constituentId}>
-                            <td>{index + 1}</td>
-                            <td>{item.displayName}</td>
-                            <td>{item.artistBio}</td>
-                            <td>{item.nationality}</td>
-
-                            <td>
-                              <Button
-                                color="primary"
-                                onClick={(e) => {
-                                  this.handleDelete(item, e);
-                                }}
-                              >
-                                Delete
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  </>
-                )}
-              </Row>
+              {this.state.data && <ManageTable state={this.state.data} />}
             </CardBody>
           </Card>
         </Container>
@@ -127,4 +184,4 @@ class Artist extends React.Component {
   }
 }
 
-export default Artist;
+export default artist;

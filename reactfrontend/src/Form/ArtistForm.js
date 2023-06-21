@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import {
   Card,
   Row,
@@ -21,453 +21,556 @@ import {
 import axios from "axios";
 import Datetime from "react-datetime";
 import moment from "moment";
-class ArtistForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      //init state
-      // data:this.props.location.state.data==null?[]:this.props.location.state.data,
-      displayName: "",
-      artistBio: "",
-      nationality: "",
-      gender: "",
-      beginDate: null,
-      endDate: "",
-      wikiQid: "",
-      ulan: "",
-      checkDisplayName: "invalid",
-      checkArtistBio: "invalid",
-      checkNationality: "invalid",
-      checkGender: "invalid",
-      checkBeginDate: "invalid",
-      checkEndDate: "invalid",
-      checkWikiQid: "invalid",
-      checkUlan: "invalid",
+import { useLocation, useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "../custom.css";
+import "react-datetime/css/react-datetime.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendar, faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
-      // this.props.location.state.displayName == null ? "invalid" : "valid",
+const ArtistForm = () => {
+  const location = useLocation();
+  const state = location != null ? location.state : null;
+  const navigate = useNavigate();
 
-      displayNameValidationError: "Please provide Full Name",
-      artistBioValidationError: "Please provide Full Name",
-      nationalityValidationError: "Please provide Full Name",
-      genderValidationError: "Please provide Full Name",
-      beginDateValidationError: "Please provide Full Name",
-      endDateValidationError: "Please provide Full Name",
-      wikiQidValidationError: "Please provide Full Name",
-      ulanValidationError: "Please provide Full Name",
+  // artworkId
+  const [constituentId, setConstituentId] = React.useState(null);
 
-      //for dropdown
-      toggleOpenGender: false,
+  // displayName
+  const [displayName, setdisplayName] = React.useState(null);
+  const [checkdisplayName, setCheckdisplayName] = React.useState("invalid");
+  const [displayNameValidationError, setdisplayNameValidationError] =
+    React.useState("Please enter a valid name.");
 
-      genderName: "Select",
-      // this.props.location.state.gender == null
-      //   ? "Select Gender"
-      //   : this.props.location.state.gender === true
-      //   ? "Male"
-      //   : "Female",
-      genderData: [
-        { genderId: true, genderName: "Male" },
-        { genderId: false, genderName: "Female" },
-      ],
+  // artistBio
+  const [artistBio, setartistBio] = React.useState(null);
+  const [checkartistBio, setCheckartistBio] = React.useState("invalid");
+  const [artistBioValidationError, setartistBioValidationError] =
+    React.useState("Please enter a valid artistBio.");
 
-      //placeholder for dates
-      beginDatePlaceholder: "Select Date",
-    };
-  }
+  // nationality
+  const [nationality, setnationality] = React.useState(null);
+  const [checknationality, setChecknationality] = React.useState("invalid");
+  const [nationalityValidationError, setnationalityValidationError] =
+    React.useState("Please enter a valid thumbnail url.");
 
-  handleTextValidation = () => {
-    const fullNameRegExp = /(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/;
-    if (!fullNameRegExp.test(this.state.displayName)) {
-      //invalid
-      return false;
-    } else return true;
+  // gender
+  const genderDropDownData = [
+    { genderId: true, genderName: "Male" },
+    { genderId: false, genderName: "Female" },
+  ];
+  const [genderName, setgenderName] = React.useState("Select Gender");
+  const [selectedGender, setselectedGender] = React.useState(null);
+
+  const [toggleOpengender, settoggleOpengender] = React.useState(null);
+
+  // beginDate
+  const [beginDate, setbeginDate] = React.useState(null);
+  const [beginDatePlaceholder, setbeginDatePlaceholder] =
+    React.useState("Select beginDate");
+  const [checkbeginDate, setCheckbeginDate] = React.useState("invalid");
+  const [beginDateValidationError, setbeginDateValidationError] =
+    React.useState("Please enter a valid thumbnail beginDate.");
+  const [isOpenBeginDate, setIsOpenBeginDate] = React.useState(false);
+
+  const handleBlurBeginDate = () => {
+    setTimeout(() => {
+      setIsOpenBeginDate(false);
+    }, 100);
   };
 
-  render() {
-    console.log("this.state.displayName:", this.state.displayName);
-    console.log("this.state.artistBio:", this.state.artistBio);
-    console.log("this.state.nationality:", this.state.nationality);
-    console.log("this.state.gender:", this.state.gender);
-    console.log("this.state.beginDate:", this.state.beginDate);
-    console.log("this.state.endDate:", this.state.endDate);
-    console.log("this.state.wikiQid:", this.state.wikiQid);
-    console.log("this.state.ulan:", this.state.ulan);
+  // endDate
+  const [endDate, setendDate] = React.useState(null);
+  const [endDatePlaceholder, setendDatePlaceholder] =
+    React.useState("Select endDate");
+  const [checkendDate, setCheckendDate] = React.useState("invalid");
+  const [endDateValidationError, setendDateValidationError] = React.useState(
+    "Please enter a valid thumbnail date."
+  );
+  const [isOpenEndDate, setIsOpenEndDate] = React.useState(false);
 
-    return (
+  const handleBlurEndDate = () => {
+    setTimeout(() => {
+      setIsOpenEndDate(false);
+    }, 100);
+  };
+
+  // wikiQid
+  const [wikiQid, setwikiQid] = React.useState(null);
+  const [checkwikiQid, setCheckwikiQid] = React.useState("invalid");
+  const [wikiQidValidationError, setwikiQidValidationError] = React.useState(
+    "Please enter a valid thumbnail url."
+  );
+  // ulan
+  const [ulan, setulan] = React.useState(null);
+  const [checkulan, setCheckulan] = React.useState("invalid");
+  const [ulanValidationError, setulanValidationError] = React.useState(
+    "Please enter a valid thumbnail url."
+  );
+
+  //init
+  const [initializedData, setInitializedData] = React.useState(false);
+  const [initializedValidation, setInitializedValidation] =
+    React.useState(false);
+
+  const InitData = () => {
+    setConstituentId(state.constituentId);
+    setdisplayName(state.displayName);
+    setartistBio(state.artistBio);
+    setnationality(state.nationality);
+    setselectedGender(state.gender);
+    if (state.gender) setgenderName("Male");
+    else setgenderName("Female");
+    setbeginDate(state.beginDate);
+    setendDate(state.endDate);
+    setwikiQid(state.wikiQid);
+    setulan(state.ulan);
+
+    setInitializedData(true);
+
+    // console.log("title", title);
+    // console.log("url", url);
+    // console.log("thumbnailUrl", thumbnailUrl);
+    // console.log("date", date);
+    // console.log("constituentIds", selectedConstituentId);
+    // console.log("artistNames", artistName);
+  };
+
+  const InitValidation = () => {
+    setCheckartistBio("valid");
+    setCheckdisplayName("valid");
+    setCheckbeginDate("valid");
+    setCheckendDate("valid");
+    setChecknationality("valid");
+    setCheckulan("valid");
+    setCheckwikiQid("valid");
+
+    setInitializedValidation(true);
+  };
+
+  const HandleTextValidation = (value) => {
+    const regex = /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()-=_+{}[\]|;:',.<>/?\s]+$/;
+
+    if (regex.test(value)) return true;
+    else return false;
+  };
+
+  return (
+    <>
+      {state != null && !initializedData && <InitData />}
+      {state != null && !initializedValidation && <InitValidation />}
+
       <div>
-        <Card className="m-3">
-          {/* <Container className="mt-2" fluid> */}
-          <CardHeader>
-            {/* <FormHeader id={this.state.location.id}></FormHeader> */}
-            Create Artist
-          </CardHeader>
-          <CardBody>
-            <Row className="pt-2">
-              <Col lg="12"></Col>
-              <FormGroup>
-                <label className="form-control-label" htmlFor="displayName">
-                  Artist Name
-                </label>
-              </FormGroup>
-              <Input
-                id="displayName"
-                placeholder="e.g. Madonna"
-                type="text"
-                required
-                maxLength={60}
-                defaultValue={this.state.displayName}
-                onChange={(e) => {
-                  this.setState({ displayName: e.target.value });
-                  //   if(e.target.value!==this.state.location.displayName)
-                  // }}
-                  // if (e.target.value === "" || !this.handleTextValidation()) {
-                  if (e.target.value === "") {
-                    this.setState({ checkDisplayName: "invalid" });
-                  } else {
-                    this.setState({ checkDisplayName: "valid" });
-                  }
-                }}
-              />
-              {this.state.checkDisplayName === "invalid" && (
-                <div className="invalid-feedback d-block">
-                  {this.state.displayNameValidationError}
-                </div>
-              )}
-            </Row>
-            <Row className="pt-2">
-              <Col lg="12"></Col>
-              <FormGroup>
-                <label className="form-control-label" htmlFor="artistBio">
-                  Bio
-                </label>
-              </FormGroup>
-              <Input
-                id="artistBio"
-                placeholder="e.g."
-                type="textarea"
-                required
-                maxLength={60}
-                defaultValue={this.state.artistBio}
-                onChange={(e) => {
-                  this.setState({ artistBio: e.target.value });
-                  //   if(e.target.value!==this.state.location.artistBio)
-                  // }}
-                  if (e.target.value === "") {
-                    this.setState({ checkArtistBio: "invalid" });
-                  } else {
-                    this.setState({ checkArtistBio: "valid" });
-                  }
-                }}
-              />
-              {this.state.checkArtistBio === "invalid" && (
-                <div className="invalid-feedback d-block">
-                  {this.state.artistBioValidationError}
-                </div>
-              )}
-            </Row>
+        <Container className="mt-5 p-3">
+          <Card>
+            <CardHeader>
+              <Row>
+                <Col md="10">
+                  <h1 className="p-3">
+                    {state != null ? "Update" : "Add"} Artist
+                  </h1>
+                </Col>
+              </Row>
+            </CardHeader>
+            <CardBody>
+              {/* <ManageForm state={state}/> */}
+              <Row className="pt-2">
+                <Col lg="12">
+                  {/* title */}
+                  <FormGroup>
+                    <label className="form-control-label" htmlFor="title">
+                      Artist Name
+                    </label>
 
-            {/* nationality */}
-            <Row className="pt-2">
-              <Col lg="6">
-                <FormGroup>
-                  <label className="form-control-label" htmlFor="nationality">
-                    Nationality
-                  </label>
-                </FormGroup>
-                <Input
-                  id="nationality"
-                  placeholder="e.g. USA"
-                  type="text"
-                  required
-                  maxLength={60}
-                  defaultValue={this.state.nationality}
-                  onChange={(e) => {
-                    this.setState({ nationality: e.target.value });
-                    //   if(e.target.value!==this.state.location.nationality)
-                    // }}
-                    if (e.target.value === "") {
-                      this.setState({ checkNationality: "invalid" });
-                    } else {
-                      this.setState({ checkNationality: "valid" });
-                    }
-                  }}
-                />
-                {this.state.checkNationality === "invalid" && (
-                  <div className="invalid-feedback d-block">
-                    {this.state.nationalityValidationError}
-                  </div>
-                )}
-              </Col>
+                    <Input
+                      id="displayName"
+                      placeholder="e.g. Ruth Asawa"
+                      type="text"
+                      required
+                      maxLength={255}
+                      defaultValue={displayName}
+                      onChange={(e) => {
+                        setdisplayName(e.target.value);
+                        if (HandleTextValidation(e.target.value))
+                          setCheckdisplayName("valid");
+                        else setCheckdisplayName("invalid");
+                      }}
+                    />
+                    {checkdisplayName === "invalid" && (
+                      <div className="invalid-feedback d-block">
+                        {displayNameValidationError}
+                      </div>
+                    )}
+                  </FormGroup>
+                </Col>
+              </Row>
 
-              {/* gender */}
-              <Col lg="6">
-                <FormGroup>
+              <Row className="pt-2">
+                <Col lg="12">
+                  {/* artistBio */}
+                  <FormGroup>
+                    <label className="form-control-label" htmlFor="title">
+                      Artist Bio
+                    </label>
+
+                    <Input
+                      id="artistBio"
+                      placeholder="e.g. Ruth Asawa"
+                      type="textarea"
+                      required
+                      maxLength={800}
+                      defaultValue={artistBio}
+                      onChange={(e) => {
+                        setartistBio(e.target.value);
+                        if (HandleTextValidation(e.target.value))
+                          setCheckartistBio("valid");
+                        else setCheckartistBio("invalid");
+                      }}
+                    />
+                    {checkartistBio === "invalid" && (
+                      <div className="invalid-feedback d-block">
+                        {artistBioValidationError}
+                      </div>
+                    )}
+                  </FormGroup>
+                </Col>
+              </Row>
+
+              <Row className="pt-2">
+                <Col lg="6">
+                  {/* Nationality */}
+                  <FormGroup>
+                    <label className="form-control-label" htmlFor="title">
+                      Nationality
+                    </label>
+
+                    <Input
+                      id="nationality"
+                      placeholder="e.g. Ruth Asawa"
+                      type="text"
+                      required
+                      maxLength={255}
+                      defaultValue={nationality}
+                      onChange={(e) => {
+                        setnationality(e.target.value);
+                        if (HandleTextValidation(e.target.value))
+                          setChecknationality("valid");
+                        else setChecknationality("invalid");
+                      }}
+                    />
+                    {checknationality === "invalid" && (
+                      <div className="invalid-feedback d-block">
+                        {nationalityValidationError}
+                      </div>
+                    )}
+                  </FormGroup>
+                </Col>
+
+                <Col lg="6">
+                  {/* gender dropdown */}
                   <label className="form-control-label" htmlFor="gender">
-                    Gender
+                    Gender <span className="text-danger">*</span>
                   </label>
-                </FormGroup>
-                <Dropdown
-                  isOpen={this.state.toggleOpenGender}
-                  toggle={() => {
-                    this.setState({
-                      toggleOpenGender: !this.state.toggleOpenGender,
-                    });
-                  }}
-                  className="w-100"
-                >
-                  <DropdownToggle caret className="w-100">
-                    {this.state.genderName}
-                  </DropdownToggle>
-                  <DropdownMenu className="w-100">
-                    {this.state.genderData.map((i, identity) => (
-                      <DropdownItem
-                        valid={this.state.checkGender === "valid"}
-                        invalid={this.state.checkGender === "invalid"}
-                        key={identity}
-                        onClick={() => {
-                          this.setState({
-                            genderName: i.genderName,
-                            gender: i.genderId,
-                          });
-                          if (i.genderId === null) {
-                            this.setState({ checkGender: "invalid" });
-                          } else {
-                            this.setState({ checkGender: "valid" });
-                          }
+                  {/* <Row>
+                    <Col> */}
+                  <Dropdown
+                    isOpen={toggleOpengender}
+                    toggle={() => {
+                      settoggleOpengender(!toggleOpengender);
+                    }}
+                    className="w-100"
+                    style={{ color: "blue" }}
+                  >
+                    <DropdownToggle
+                      caret
+                      className="w-100 text-left"
+                      color="primary"
+                    >
+                      {genderName}
+                    </DropdownToggle>
+                    <DropdownMenu className="w-100">
+                      {genderDropDownData != null &&
+                        genderDropDownData.map((i, key) => (
+                          <DropdownItem
+                            key={i.ConstituentId}
+                            onClick={() => {
+                              setselectedGender(i.genderId);
+                              setgenderName(i.genderName);
+                            }}
+                          >
+                            {i.genderName}
+                          </DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                  </Dropdown>
+                  {/* </Col> */}
+                  {/* <Col
+                      sm="1"
+                      className="d-flex align-items-center justify-content-center"
+                    >
+                      <FontAwesomeIcon icon={faCirclePlus} size="lg" />
+                    </Col> */}
+                  {/* </Row> */}
+                </Col>
+              </Row>
+
+              <Row className="pt-2">
+                {/* beginDate */}
+                <Col lg="6">
+                  <FormGroup>
+                    <label className="form-control-label" htmlFor="beginDate">
+                      Begin Date<span className="text-danger">*</span>
+                    </label>
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            iconClassName="fa-solid"
+                          />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      {/* //beginDatetime */}
+
+                      <Datetime
+                        inputProps={{
+                          placeholder: beginDatePlaceholder,
+                          className: "custom-calendar",
                         }}
-                      >
-                        {i.genderName}
-                      </DropdownItem>
-                    ))}
-                  </DropdownMenu>
-                </Dropdown>
-              </Col>
-            </Row>
-            <Row className="pt-2">
-              {/* BeginDate */}
-              <Col lg="6">
-                <FormGroup>
-                  <label className="form-control-label" htmlFor="beginDate">
-                    Begin Date
-                  </label>
-                  <InputGroup className="input-group-alternative">
-                    {/* <InputGroupAddon addonType="prepend">
-                      <InputGroupText>
-                        <i className="ni ni-calendar-grid-58" />
-                      </InputGroupText>
-                    </InputGroupAddon> */}
-                    {/* //datetime */}
-                    <Datetime
-                      inputProps={{
-                        placeholder: this.state.beginDatePlaceholder,
-                      }}
-                      closeOnSelect={true}
-                      dateFormat="YYYY-MM-DD"
-                      timeFormat={false}
-                      utc={true}
-                      value={this.state.beginDate}
-                      isInvalid={this.state.checkBeginDate === "invalid"}
+                        closeOnSelect={true}
+                        dateFormat="YYYY-MM-DD"
+                        timeFormat={false}
+                        utc={true}
+                        defaultValue={beginDate}
+                        isInvalid={checkbeginDate === "invalid"}
+                        onChange={(e) => {
+                          setbeginDate(moment(e).format());
+                          if (moment(e).format() === null) {
+                            setCheckbeginDate("invalid");
+                          } else setCheckbeginDate("valid");
+                        }}
+                      />
+                    </InputGroup>
+                    {checkbeginDate === "invalid" && (
+                      <div className="invalid-feedback d-block">
+                        Please provide valid begin date.
+                      </div>
+                    )}
+                  </FormGroup>
+                </Col>
+
+                {/* endDate */}
+                <Col lg="6">
+                  <FormGroup>
+                    <label className="form-control-label" htmlFor="endDate">
+                      End Date<span className="text-danger">*</span>
+                    </label>
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            iconClassName="fa-solid"
+                          />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      {/* //endDatetime */}
+
+                      <Datetime
+                        inputProps={{
+                          placeholder: endDatePlaceholder,
+                          className: "custom-calendar",
+                        }}
+                        closeOnSelect={true}
+                        dateFormat="YYYY-MM-DD"
+                        timeFormat={false}
+                        utc={true}
+                        defaultValue={endDate}
+                        isInvalid={checkendDate === "invalid"}
+                        onChange={(e) => {
+                          setendDate(moment(e).format());
+                          if (moment(e).format() === null) {
+                            setCheckendDate("invalid");
+                          } else setCheckendDate("valid");
+                        }}
+                      />
+                    </InputGroup>
+                    {checkendDate === "invalid" && (
+                      <div className="invalid-feedback d-block">
+                        Please provide valid end date.
+                      </div>
+                    )}
+                  </FormGroup>
+                </Col>
+              </Row>
+
+              <Row className="pt-2">
+                <Col lg="6">
+                  {/* wikiQid */}
+                  <FormGroup>
+                    <label className="form-control-label" htmlFor="title">
+                      Wiki QID
+                    </label>
+
+                    <Input
+                      id="wikiQid"
+                      placeholder="e.g. Q12345"
+                      type="text"
+                      required
+                      maxLength={255}
+                      defaultValue={wikiQid}
                       onChange={(e) => {
-                        this.setState({ beginDate: moment(e).format() });
-                        if (moment(e).format() === null) {
-                          this.setState({ checkBeginDate: "invalid" });
-                        } else this.setState({ checkBeginDate: "valid" });
+                        setwikiQid(e.target.value);
+                        if (HandleTextValidation(e.target.value))
+                          setCheckwikiQid("valid");
+                        else setCheckwikiQid("invalid");
                       }}
                     />
-                  </InputGroup>
-                  <div className="invalid-feedback">
-                    Please provide valid begin date
-                  </div>
-                </FormGroup>
-              </Col>
+                    {checkwikiQid === "invalid" && (
+                      <div className="invalid-feedback d-block">
+                        {wikiQidValidationError}
+                      </div>
+                    )}
+                  </FormGroup>
+                </Col>
+                <Col lg="6">
+                  {/* ulan */}
+                  <FormGroup>
+                    <label className="form-control-label" htmlFor="title">
+                      ULAN
+                    </label>
 
-              {/* EndDate */}
-              <Col lg="6">
-                <FormGroup>
-                  <label className="form-control-label" htmlFor="endDate">
-                    End Date
-                  </label>
-                  <InputGroup className="input-group-alternative">
-                    {/* <InputGroupAddon addonType="prepend">
-                      <InputGroupText>
-                        <i className="ni ni-calendar-grid-58" />
-                      </InputGroupText>
-                    </InputGroupAddon> */}
-                    {/* //datetime */}
-                    <Datetime
-                      inputProps={{
-                        placeholder: this.state.endDatePlaceholder,
-                      }}
-                      closeOnSelect={true}
-                      dateFormat="YYYY-MM-DD"
-                      timeFormat={false}
-                      utc={true}
-                      value={this.state.endDate}
-                      isInvalid={this.state.checkEndDate === "invalid"}
+                    <Input
+                      id="ulan"
+                      placeholder="e.g. E1234"
+                      type="text"
+                      required
+                      maxLength={255}
+                      defaultValue={ulan}
                       onChange={(e) => {
-                        this.setState({ endDate: moment(e).format() });
-                        if (moment(e).format() === null) {
-                          this.setState({ checkEndDate: "invalid" });
-                        } else this.setState({ checkEndDate: "valid" });
+                        setulan(e.target.value);
+                        if (e.target.value != null) setCheckulan("valid");
+                        else setCheckulan("invalid");
                       }}
                     />
-                  </InputGroup>
-                  <div className="invalid-feedback">
-                    Please provide valid end date
-                  </div>
-                </FormGroup>
-                {console.log(
-                  "begin and enddate ",
-                  this.state.beginDate,
-                  this.state.endDate
-                )}
+                    {checkulan === "invalid" && (
+                      <div className="invalid-feedback d-block">
+                        {nationalityValidationError}
+                      </div>
+                    )}
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row className="pt-2">
+                <Col>
+                  <Button
+                    onClick={() => {
+                      // console.log("title", title);
+                      // console.log("date", date);
+                      // console.log("url", url);
+                      // console.log("thumbnailUrl", thumbnailUrl);
+                      console.log("gender", selectedGender);
+                      console.log(
+                        "begindate",
+                        moment(beginDate).format("YYYY-MM-DD HH:mm:ss.sss")
+                      );
 
-                <FormGroup>
-                  <label className="form-control-label" htmlFor="endDate">
-                    End Date
-                  </label>
-                </FormGroup>
-                <Input
-                  id="endDate"
-                  placeholder="e.g. USA"
-                  type="text"
-                  required
-                  maxLength={60}
-                  defaultValue={this.state.endDate}
-                  onChange={(e) => {
-                    //   this.setState({endDate:e.target.value});
-                    //   if(e.target.value!==this.state.location.endDate)
-                    // }}
-                    if (e.target.value === "" || !this.handleTextValidation()) {
-                      this.setState({ checkEndDate: "invalid" });
-                    } else {
-                      this.setState({ checkEndDate: "valid" });
-                    }
-                  }}
-                />
-                {this.state.checkEndDate === "invalid" && (
-                  <div className="invalid-feedback d-block">
-                    {this.state.endDateValidationError}
-                  </div>
-                )}
-              </Col>
-            </Row>
+                      console.log("endDate", endDate);
 
-            <Row className="pt-2">
-              {/* Wiki QID */}
-              <Col lg="6">
-                <FormGroup>
-                  <label className="form-control-label" htmlFor="wikiQid">
-                    Wiki Qid
-                  </label>
-                </FormGroup>
-                <Input
-                  id="wikiQid"
-                  placeholder="123424"
-                  type="text"
-                  required
-                  maxLength={60}
-                  defaultValue={this.state.wikiQid}
-                  onChange={(e) => {
-                    this.setState({ wikiQid: e.target.value });
-                    //   if(e.target.value!==this.state.location.wikiQid)
-                    // }}
-                    if (e.target.value === "" || !this.handleTextValidation()) {
-                      this.setState({ checkWikiQid: "invalid" });
-                    } else {
-                      this.setState({ checkWikiQid: "valid" });
-                    }
-                  }}
-                />
-                {this.state.checkWikiQid === "invalid" && (
-                  <div className="invalid-feedback d-block">
-                    {this.state.wikiQidValidationError}
-                  </div>
-                )}
-              </Col>
+                      if (
+                        checkartistBio === "valid" &&
+                        checkbeginDate === "valid" &&
+                        checkdisplayName === "valid" &&
+                        checkendDate === "valid" &&
+                        selectedGender != null &&
+                        checknationality === "valid" &&
+                        checkulan === "valid" &&
+                        checkwikiQid === "valid"
+                      ) {
+                        if (state == null) {
+                          axios
+                            .post("http://localhost:8081/artist", {
+                              displayName: displayName,
+                              artistBio: artistBio,
+                              nationality: nationality,
+                              gender: selectedGender,
+                              beginDate: moment(beginDate).format(
+                                "YYYY-MM-DD HH:mm:ss.sss"
+                              ),
+                              endDate: moment(endDate).format(
+                                "YYYY-MM-DD HH:mm:ss.sss"
+                              ),
 
-              {/* ULAN */}
-              <Col lg="6">
-                <FormGroup>
-                  <label className="form-control-label" htmlFor="ulan">
-                    ULAN
-                  </label>
-                </FormGroup>
-                <Input
-                  id="ulan"
-                  placeholder="e.g. 51223249"
-                  type="number"
-                  required
-                  maxLength={60}
-                  defaultValue={this.state.ulan}
-                  onChange={(e) => {
-                    this.setState({ ulan: e.target.value });
-                    //   if(e.target.value!==this.state.location.ulan)
-                    // }}
-                    if (e.target.value === "" || !this.handleTextValidation()) {
-                      this.setState({ checkUlan: "invalid" });
-                    } else {
-                      this.setState({ checkUlan: "valid" });
-                    }
-                  }}
-                />
-                {this.state.checkUlan === "invalid" && (
-                  <div className="invalid-feedback d-block">
-                    {this.state.ulanValidationError}
-                  </div>
-                )}
-              </Col>
-            </Row>
-
-            <Row>
-              <Col>
-                <Button
-                  onClick={() => {
-                    // if (
-                    //   this.state.checkArtistBio === "valid" &&
-                    //   this.state.checkBeginDate === "valid" &&
-                    //   this.state.checkDisplayName === "valid" &&
-                    //   this.state.checkEndDate === "valid" &&
-                    //   this.state.checkGender === "valid" &&
-                    //   this.state.checkNationality === "valid" &&
-                    //   this.state.checkUlan === "valid" &&
-                    //   this.state.checkWikiQid === "valid"
-                    // )
-                    {
-                      axios
-                        .post("http://localhost:8081/artist", {
-                          displayName: this.state.displayName,
-                          artistBio: this.state.artistBio,
-                          nationality: this.state.nationality,
-                          displayName: this.state.displayName,
-                          gender: this.state.gender,
-                          beginDate: this.state.beginDate,
-                          endDate: this.state.endDate,
-                          wikiQid: this.state.wikiQid,
-                          ulan: this.state.ulan,
-                        })
-                        .then((res) => {
-                          if (res.status >= 200 && res.status < 300) {
-                            console.log("Success");
-                          } else {
-                            console.log("Error creating artist");
-                          }
-                        })
-                        .catch((error) => {
-                          console.log(error);
-                        });
-                    }
-                  }}
-                >
-                  Submit
-                </Button>
-              </Col>
-            </Row>
-          </CardBody>
-          {/* </Container> */}
-        </Card>
+                              wikiQid: wikiQid,
+                              ulan: ulan,
+                            })
+                            .then((res) => {
+                              if (res.status >= 200 && res.status < 300) {
+                                console.log("Success");
+                                navigate("/artist");
+                              } else {
+                                console.log("Error creating artist");
+                              }
+                            })
+                            .catch((error) => {
+                              console.log(error);
+                            });
+                        } else {
+                          axios
+                            .put(
+                              `http://localhost:8081/artist/${constituentId}`,
+                              {
+                                displayName: displayName,
+                                artistBio: artistBio,
+                                nationality: nationality,
+                                gender: selectedGender,
+                                beginDate: moment(beginDate).format(
+                                  "YYYY-MM-DD HH:mm:ss.sss"
+                                ),
+                                endDate: moment(endDate).format(
+                                  "YYYY-MM-DD HH:mm:ss.sss"
+                                ),
+                                wikiQid: wikiQid,
+                                ulan: ulan,
+                              }
+                            )
+                            .then((res) => {
+                              if (res.status >= 200 && res.status < 300) {
+                                // navigate("/artworkView", {
+                                //   state: {
+                                //     item: {
+                                //       title: title,
+                                //       constituentId: selectedConstituentId,
+                                //       url: url,
+                                //       thumbnailUrl: thumbnailUrl,
+                                //       date: date,
+                                //     },
+                                //   },
+                                // });
+                                console.log("Success");
+                              } else {
+                                console.log("Error Updating artwork");
+                              }
+                            })
+                            .catch((error) => {
+                              console.log(error);
+                            });
+                        }
+                      } else {
+                        console.log("Invalid Entries");
+                      }
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </Container>
       </div>
-    );
-  }
-}
+    </>
+  );
+};
 
 export default ArtistForm;

@@ -9,10 +9,11 @@ app.use(express.json());
 // var http = require("http");
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "artdb",
+  host: "db4free.net",
+  port: 3306,
+  user: "artistartwork",
+  password: "password123",
+  database: "clevero_artdb",
 });
 
 // ***********ARTIST X ARTWORK HTTP METHODS***********
@@ -43,7 +44,7 @@ app.get("/artistDropDownData/", (req, res) => {
 // ***********ARTIST HTTP METHODS***********
 
 app.get("/artist", (req, res) => {
-  const sql = "select * from artist";
+  const sql = "select * from `artist`";
   db.query(sql, (err, result) => {
     if (err) return res.json({ Message: "SERVER ERROR" });
     return res.json(result);
@@ -96,7 +97,7 @@ app.put("/artist/:id", (req, res) => {
 });
 
 app.delete("/artist/:id", (req, res) => {
-  const sql = "DELETE FROM `artist` WHERE ConstituentId =?";
+  const sql = "DELETE FROM `artist` WHERE `ConstituentId` =?";
   const id = req.params.id;
   db.query(sql, [id], (err, result) => {
     if (err) return res.json({ Message: "SERVER ERROR" });

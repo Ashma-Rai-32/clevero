@@ -148,7 +148,9 @@ const ArtworkForm = () => {
             <CardHeader>
               <Row>
                 <Col md="10">
-                  <h1 className="p-3">Add Artwork</h1>
+                  <h1 className="p-3">
+                    {state != null ? "Update" : "Add"} Artwork
+                  </h1>
                 </Col>
               </Row>
             </CardHeader>
@@ -377,7 +379,9 @@ const ArtworkForm = () => {
                               constituentId: selectedConstituentId,
                               url: url,
                               thumbnailUrl: thumbnailUrl,
-                              date: date,
+                              date: moment(date).format(
+                                "YYYY-MM-DD HH-mm-ss.sss"
+                              ),
                             })
                             .then((res) => {
                               if (res.status >= 200 && res.status < 300) {
@@ -396,7 +400,9 @@ const ArtworkForm = () => {
                               constituentId: selectedConstituentId,
                               url: url,
                               thumbnailUrl: thumbnailUrl,
-                              date: date,
+                              date: moment(date).format(
+                                "YYYY-MM-DD HH-mm-ss.sss"
+                              ),
                             })
                             .then((res) => {
                               if (res.status >= 200 && res.status < 300) {
