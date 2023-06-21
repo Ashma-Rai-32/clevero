@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import {
   Card,
   Row,
@@ -21,70 +21,127 @@ import {
 import axios from "axios";
 import Datetime from "react-datetime";
 import moment from "moment";
-class ArtworkForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      //init state
-      // data:this.props.location.state.data==null?[]:this.props.location.state.data,
-      title: "",
-      constituentId: "",
-      url: "",
-      thumbnailUrl: "",
-      date: null,
+import { useLocation, useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "../custom.css";
+import "react-datetime/css/react-datetime.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCalendar, faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 
-      checkTitle: "invalid",
-      checkConstituentId: "invalid",
-      checkUrl: "invalid",
-      checkThumbnailUrl: "invalid",
-      checkDate: "invalid",
-      // displayNameValidationError: "Please provide Full Name",
+const ArtworkForm = () => {
+  const location = useLocation();
+  const state = location != null ? location.state : null;
+  const navigate = useNavigate();
 
-      //for dropdown
-      artistName: "Select",
-      toggleOpenArtist: false,
-      // this.props.location.state.gender == null
-      //   ? "Select Gender"
-      //   : this.props.location.state.gender === true
-      //   ? "Male"
-      //   : "Female",
-      artistDropDownData: [],
+  // artworkId
+  const [artworkId, setArtworkId] = React.useState(null);
 
-      //placeholder for dates
-      datePlaceholder: "Select Date",
-    };
-  }
+  // title
+  const [title, setTitle] = React.useState(null);
+  const [checkTitle, setCheckTitle] = React.useState("invalid");
+  const [titleValidationError, setTitleValidationError] = React.useState(
+    "Please enter a valid title."
+  );
 
-  async componentDidMount() {
-    await axios
+  // artistDropDownData
+  const [artistDropDownData, setArtistDropDownData] = React.useState(null);
+  const [artistName, setArtistName] = React.useState("Select Artist");
+  const [toggleOpenArtist, setToggleOpenArtist] = React.useState(null);
+  const [selectedConstituentId, setSelectedConstituentId] =
+    React.useState(null);
+
+  // url
+  const [url, setUrl] = React.useState(null);
+  const [checkUrl, setCheckUrl] = React.useState("invalid");
+  const [urlValidationError, setUrlValidationError] = React.useState(
+    "Please enter a valid url."
+  );
+
+  // thumbnailUrl
+  const [thumbnailUrl, setThumbnailUrl] = React.useState(null);
+  const [checkThumbnailUrl, setCheckThumbnailUrl] = React.useState("invalid");
+  const [thumbnailUrlValidationError, setThumbnailUrlValidationError] =
+    React.useState("Please enter a valid thumbnail url.");
+
+  // date
+  const [date, setDate] = React.useState(null);
+  const [datePlaceholder, setDatePlaceholder] = React.useState("Select Date");
+  const [checkDate, setCheckDate] = React.useState("invalid");
+  const [dateValidationError, setDateValidationError] = React.useState(
+    "Please enter a valid thumbnail date."
+  );
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 100);
+  };
+
+  //init
+  const [initializedData, setInitializedData] = React.useState(false);
+  const [initializedValidation, setInitializedValidation] =
+    React.useState(false);
+
+  const InitArtistDropDown = () => {
+    axios
       .get("http://localhost:8081/artistDropDownData")
       .then((res) => {
-        this.setState({ artistDropDownData: res.data });
+        setArtistDropDownData(res.data);
       })
       .catch((err) => {
         console.log("SERVER ERROR");
       });
-  }
 
-  handleTextValidation = () => {
-    const fullNameRegExp = /(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/;
-    if (!fullNameRegExp.test(this.state.displayName)) {
-      //invalid
-      return false;
-    } else return true;
+    console.log("artistdropdowndata", artistDropDownData);
   };
 
-  render() {
-    console.log("this.state.title:", this.state.title);
-    console.log(
-      "this.state.selectedConstituentId:",
-      this.state.selectedConstituentId
-    );
-    console.log("this.state.url:", this.state.url);
-    console.log("this.state.thumbnailUrl:", this.state.thumbnailUrl);
-    console.log("this.state.date:", this.state.date);
+  const InitData = () => {
+    setArtworkId(state.artworkId);
+    setTitle(state.title);
+    setUrl(state.url);
+    setThumbnailUrl(state.thumbnailUrl);
+    setDate(state.date);
+    if (state.constituentIds != null) {
+      setArtistName(state.artistNames);
+      setSelectedConstituentId(state.constituentIds);
+    }
+    setInitializedData(true);
 
-    return (
+    console.log("title", title);
+    console.log("url", url);
+    console.log("thumbnailUrl", thumbnailUrl);
+    console.log("date", date);
+    console.log("constituentIds", selectedConstituentId);
+    console.log("artistNames", artistName);
+  };
+
+  const InitValidation = () => {
+    setCheckTitle("valid");
+    setCheckDate("valid");
+    setCheckThumbnailUrl("valid");
+    setCheckUrl("valid");
+    setInitializedValidation(true);
+  };
+
+  const HandleTextValidation = (value) => {
+    const regex = /^[a-zA-Z][a-zA-Z0-9!@#$%^&*()-=_+{}[\]|;:',.<>/?\s]+$/;
+
+    if (regex.test(value)) return true;
+    else return false;
+  };
+
+  const HandleUrlValidation = (value) => {
+    const regex = /^(ftp|http|https):\/\/[^ "]+|^www\.[^ "]+\.[^ "]+$/;
+    if (regex.test(value)) return true;
+    else return false;
+  };
+  return (
+    <>
+      {artistDropDownData == null && <InitArtistDropDown />}
+      {state != null && !initializedData && <InitData />}
+      {state != null && !initializedValidation && <InitValidation />}
+
       <div>
         <Container className="mt-5 p-3">
           <Card>
@@ -96,6 +153,7 @@ class ArtworkForm extends React.Component {
               </Row>
             </CardHeader>
             <CardBody>
+              {/* <ManageForm state={state}/> */}
               <Row className="pt-2">
                 <Col lg="12">
                   {/* title */}
@@ -110,39 +168,34 @@ class ArtworkForm extends React.Component {
                       type="text"
                       required
                       maxLength={255}
-                      defaultValue={this.state.title}
+                      defaultValue={title}
                       onChange={(e) => {
-                        this.setState({ title: e.target.value });
-                        //   if(e.target.value!==this.state.location.title)
-                        // }}
-                        // if (e.target.value === "" || !this.handleTextValidation()) {
-                        if (e.target.value === "") {
-                          this.setState({ checkTitle: "invalid" });
-                        } else {
-                          this.setState({ checkTitle: "valid" });
-                        }
+                        setTitle(e.target.value);
+                        if (HandleTextValidation(e.target.value))
+                          setCheckTitle("valid");
+                        else setCheckTitle("invalid");
                       }}
                     />
-                    {this.state.checkTitle === "invalid" && (
+                    {checkTitle === "invalid" && (
                       <div className="invalid-feedback d-block">
-                        {this.state.titleValidationError}
+                        {titleValidationError}
                       </div>
                     )}
                   </FormGroup>
                 </Col>
               </Row>
-              <Row className="pt-2">
+              <Row className="pt-2 pb-3">
                 <Col lg="12">
                   {/* artist dropdown */}
                   <label className="form-control-label" htmlFor="artist">
                     Artist <span className="text-danger">*</span>
                   </label>
+                  {/* <Row>
+                    <Col> */}
                   <Dropdown
-                    isOpen={this.state.toggleOpenArtist}
+                    isOpen={toggleOpenArtist}
                     toggle={() => {
-                      this.setState({
-                        toggleOpenArtist: !this.state.toggleOpenArtist,
-                      });
+                      setToggleOpenArtist(!toggleOpenArtist);
                     }}
                     className="w-100"
                     style={{ color: "blue" }}
@@ -152,36 +205,39 @@ class ArtworkForm extends React.Component {
                       className="w-100 text-left"
                       color="primary"
                     >
-                      {this.state.artistName}
+                      {artistName}
                     </DropdownToggle>
                     <DropdownMenu className="w-100">
-                      {this.state.artistDropDownData.map((i, key) => (
-                        <DropdownItem
-                          key={i.ConstituentId}
-                          onClick={() => {
-                            this.setState({
-                              artistName: i.DisplayName,
-                              selectedConstituentId: i.ConstituentId,
-                            });
-                            // setartistName(i.artistName);
-                            // setSelectedartistId(i.artistId);
-                            // setSelectedartistIdState("valid");
-                          }}
-                        >
-                          {i.DisplayName}
-                        </DropdownItem>
-                      ))}
+                      {artistDropDownData != null &&
+                        artistDropDownData.map((i, key) => (
+                          <DropdownItem
+                            key={i.ConstituentId}
+                            onClick={() => {
+                              setArtistName(i.DisplayName);
+                              setSelectedConstituentId(i.ConstituentId);
+                            }}
+                          >
+                            {i.DisplayName}
+                          </DropdownItem>
+                        ))}
                     </DropdownMenu>
                   </Dropdown>
+                  {/* </Col> */}
+                  {/* <Col
+                      sm="1"
+                      className="d-flex align-items-center justify-content-center"
+                    >
+                      <FontAwesomeIcon icon={faCirclePlus} size="lg" />
+                    </Col> */}
+                  {/* </Row> */}
                 </Col>
               </Row>
-
               <Row className="pt-2">
                 <Col lg="12">
                   {/* url */}
                   <FormGroup>
                     <label className="form-control-label" htmlFor="url">
-                      Link
+                      Link<span className="text-danger">*</span>
                     </label>
 
                     <Input
@@ -190,22 +246,20 @@ class ArtworkForm extends React.Component {
                       type="text"
                       required
                       maxLength={255}
-                      defaultValue={this.state.url}
+                      defaultValue={url}
                       onChange={(e) => {
-                        this.setState({ url: e.target.value });
-                        //   if(e.target.value!==this.state.location.url)
-                        // }}
-                        // if (e.target.value === "" || !this.handleTextValidation()) {
-                        if (e.target.value === "") {
-                          this.setState({ checkUrl: "invalid" });
-                        } else {
-                          this.setState({ checkUrl: "valid" });
-                        }
+                        setUrl(e.target.value);
+                        if (
+                          HandleUrlValidation(e.target.value) &&
+                          e.target.value != ""
+                        )
+                          setCheckUrl("valid");
+                        else setCheckUrl("invalid");
                       }}
                     />
-                    {this.state.checkUrl === "invalid" && (
+                    {checkUrl === "invalid" && (
                       <div className="invalid-feedback d-block">
-                        {this.state.urlValidationError}
+                        {urlValidationError}
                       </div>
                     )}
                   </FormGroup>
@@ -220,7 +274,8 @@ class ArtworkForm extends React.Component {
                       className="form-control-label"
                       htmlFor="thumbnailUrl"
                     >
-                      Artwork thumbnailUrl
+                      Thumbnail url
+                      <span className="text-danger">*</span>
                     </label>
 
                     <Input
@@ -229,22 +284,20 @@ class ArtworkForm extends React.Component {
                       type="text"
                       required
                       maxLength={255}
-                      defaultValue={this.state.thumbnailUrl}
+                      defaultValue={thumbnailUrl}
                       onChange={(e) => {
-                        this.setState({ thumbnailUrl: e.target.value });
-                        //   if(e.target.value!==this.state.location.thumbnailUrl)
-                        // }}
-                        // if (e.target.value === "" || !this.handleTextValidation()) {
-                        if (e.target.value === "") {
-                          this.setState({ checkThumbnailUrl: "invalid" });
-                        } else {
-                          this.setState({ checkThumbnailUrl: "valid" });
-                        }
+                        setThumbnailUrl(e.target.value);
+                        if (
+                          HandleUrlValidation(e.target.value) &&
+                          e.target.value != ""
+                        )
+                          setCheckThumbnailUrl("valid");
+                        else setCheckThumbnailUrl("invalid");
                       }}
                     />
-                    {this.state.checkThumbnailUrl === "invalid" && (
+                    {checkThumbnailUrl === "invalid" && (
                       <div className="invalid-feedback d-block">
-                        {this.state.thumbnailUrlValidationError}
+                        {thumbnailUrlValidationError}
                       </div>
                     )}
                   </FormGroup>
@@ -256,36 +309,43 @@ class ArtworkForm extends React.Component {
                 <Col lg="6">
                   <FormGroup>
                     <label className="form-control-label" htmlFor="date">
-                      Date
+                      Date<span className="text-danger">*</span>
                     </label>
                     <InputGroup className="input-group-alternative">
-                      {/* <InputGroupAddon addonType="prepend">
-                      <InputGroupText>
-                        <i className="ni ni-calendar-grid-58" />
-                      </InputGroupText>
-                    </InputGroupAddon> */}
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <FontAwesomeIcon
+                            icon={faCalendar}
+                            iconClassName="fa-solid"
+                          />
+                        </InputGroupText>
+                      </InputGroupAddon>
                       {/* //datetime */}
+
                       <Datetime
                         inputProps={{
-                          placeholder: this.state.datePlaceholder,
+                          placeholder: datePlaceholder,
+                          className: "custom-calendar",
                         }}
                         closeOnSelect={true}
                         dateFormat="YYYY-MM-DD"
                         timeFormat={false}
                         utc={true}
-                        value={this.state.date}
-                        isInvalid={this.state.checkDate === "invalid"}
+                        defaultValue={date}
+                        isInvalid={checkDate === "invalid"}
                         onChange={(e) => {
-                          this.setState({ date: moment(e).format() });
+                          setDate(moment(e).format());
                           if (moment(e).format() === null) {
-                            this.setState({ checkDate: "invalid" });
-                          } else this.setState({ checkDate: "valid" });
+                            setCheckDate("invalid");
+                          } else setCheckDate("valid");
                         }}
                       />
                     </InputGroup>
-                    <div className="invalid-feedback">
-                      Please provide valid begin date
-                    </div>
+                    {checkDate === "invalid" && (
+                      <div className="invalid-feedback d-block">
+                        Please provide valid begin date
+                      </div>
+                    )}
                   </FormGroup>
                 </Col>
               </Row>
@@ -294,35 +354,74 @@ class ArtworkForm extends React.Component {
                 <Col>
                   <Button
                     onClick={() => {
-                      // if (
-                      //   this.state.checkArtistBio === "valid" &&
-                      //   this.state.checkDate === "valid" &&
-                      //   this.state.checkDisplayName === "valid" &&
-                      //   this.state.checkEndDate === "valid" &&
-                      //   this.state.checkGender === "valid" &&
-                      //   this.state.checkNationality === "valid" &&
-                      //   this.state.checkUlan === "valid" &&
-                      //   this.state.checkWikiQid === "valid"
-                      // )
-                      {
-                        axios
-                          .post("http://localhost:8081/artwork", {
-                            title: this.state.title,
-                            constituentId: this.state.selectedConstituentId,
-                            url: this.state.url,
-                            thumbnailUrl: this.state.thumbnailUrl,
-                            date: this.state.date,
-                          })
-                          .then((res) => {
-                            if (res.status >= 200 && res.status < 300) {
-                              console.log("SUccess");
-                            } else {
-                              console.log("Error creating artist");
-                            }
-                          })
-                          .catch((error) => {
-                            console.log(error);
-                          });
+                      console.log("title", title);
+                      console.log("date", date);
+                      console.log("url", url);
+                      console.log("thumbnailUrl", thumbnailUrl);
+                      console.log(
+                        "selectedConstituentId",
+                        selectedConstituentId
+                      );
+
+                      if (
+                        checkTitle === "valid" &&
+                        checkDate === "valid" &&
+                        checkUrl === "valid" &&
+                        checkThumbnailUrl === "valid" &&
+                        selectedConstituentId != null
+                      ) {
+                        if (state == null) {
+                          axios
+                            .post("http://localhost:8081/artwork", {
+                              title: title,
+                              constituentId: selectedConstituentId,
+                              url: url,
+                              thumbnailUrl: thumbnailUrl,
+                              date: date,
+                            })
+                            .then((res) => {
+                              if (res.status >= 200 && res.status < 300) {
+                                console.log("Success");
+                              } else {
+                                console.log("Error creating artwork");
+                              }
+                            })
+                            .catch((error) => {
+                              console.log(error);
+                            });
+                        } else {
+                          axios
+                            .put(`http://localhost:8081/artwork/${artworkId}`, {
+                              title: title,
+                              constituentId: selectedConstituentId,
+                              url: url,
+                              thumbnailUrl: thumbnailUrl,
+                              date: date,
+                            })
+                            .then((res) => {
+                              if (res.status >= 200 && res.status < 300) {
+                                navigate("/artworkView", {
+                                  state: {
+                                    item: {
+                                      title: title,
+                                      constituentId: selectedConstituentId,
+                                      url: url,
+                                      thumbnailUrl: thumbnailUrl,
+                                      date: date,
+                                    },
+                                  },
+                                });
+                                console.log("Success");
+                              } else {
+                                console.log("Error Updating artwork");
+                              }
+                            })
+                            .catch((error) => {
+                              console.log(error);
+                            });
+                        }
+                      } else {
+                        console.log("Invalid Entries");
                       }
                     }}
                   >
@@ -334,8 +433,8 @@ class ArtworkForm extends React.Component {
           </Card>
         </Container>
       </div>
-    );
-  }
-}
+    </>
+  );
+};
 
 export default ArtworkForm;

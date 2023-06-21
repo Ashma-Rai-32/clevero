@@ -32,9 +32,14 @@ const ManageTable = (props) => {
     // });
     // return <Navigate to="/artworkView" state={item} props={item} />;
   };
+  const handleEdit = (item) => {
+    navigate("/artworkForm", { state: item });
+    console.log("handleEdit", item);
+  };
 
   const handleDelete = (item, e) => {
-    e.preventDefault();
+    // e.preventDefault();
+    console.log("item", item);
     axios
       .delete(`http://localhost:8081/artwork/${item.artworkId}`)
       .then((res) => {
@@ -78,7 +83,7 @@ const ManageTable = (props) => {
                     <tr key={item.artworkId}>
                       <th scope="row">{index + 1}</th>
                       <td>{item.title}</td>
-                      <td>{item.displayName}</td>
+                      <td>{item.artistNames}</td>
                       <td className="hidden">
                         <Badge
                           color="info"
@@ -97,7 +102,7 @@ const ManageTable = (props) => {
                           height="auto"
                         />
                       </td>
-                      <td className="hidden">{item.nationality}</td>
+                      <td className="hidden">{item.nationalities}</td>
                       <td>{moment(item.date).format("MMM YYYY")}</td>
                       <td>
                         <Row>
@@ -116,8 +121,8 @@ const ManageTable = (props) => {
                             <Button
                               color="warning"
                               style={{ width: "100%" }}
-                              onClick={(e) => {
-                                this.handleDelete(item, e);
+                              onClick={() => {
+                                handleEdit(item);
                               }}
                             >
                               Edit
@@ -128,7 +133,7 @@ const ManageTable = (props) => {
                               color="danger"
                               style={{ width: "100%" }}
                               onClick={(e) => {
-                                this.handleDelete(item, e);
+                                handleDelete(item, e);
                               }}
                             >
                               Delete
@@ -160,14 +165,17 @@ class Artwork extends React.Component {
 
   async componentDidMount() {
     await axios
-      .get("http://localhost:8081/artistxartwork")
+      .get("http://localhost:8081/artwork")
       .then((res) => {
         this.setState({ data: res.data });
 
         res.data = res.data.map((e) => {
           return {
+            artworkId: e.ArtworkId,
             title: e.Title,
-            constituentId: e.ConstituentId,
+            constituentIds: e.ConstituentIds,
+            artistNames: e.artistNames,
+            nationalities: e.nationalities,
             date: e.Date,
             medium: e.Medium,
             dimensions: e.Dimensions,
@@ -189,15 +197,15 @@ class Artwork extends React.Component {
             weight: e.Weight,
             width: e.Width,
             duration: e.Duration,
-            artistArtworkId: e.ArtistArtworkId,
-            displayName: e.DisplayName,
-            artistBio: e.ArtistBio,
-            nationality: e.Nationality,
-            gender: e.Gender,
-            beginDate: e.BeginDate,
-            endDate: e.EndDate,
-            wikiQid: e.WikiQid,
-            ulan: e.Ulan,
+            // artistArtworkId: e.ArtistArtworkId,
+            // displayName: e.DisplayName,
+            // artistBio: e.ArtistBio,
+            // nationality: e.Nationality,
+            // gender: e.Gender,
+            // beginDate: e.BeginDate,
+            // endDate: e.EndDate,
+            // wikiQid: e.WikiQid,
+            // ulan: e.Ulan,
           };
         });
         this.setState({ data: res.data });
@@ -260,7 +268,7 @@ class Artwork extends React.Component {
                 <Col md="10">
                   <h1 className="p-3">ARTWORKS</h1>
                 </Col>
-                <Col className="p-3">
+                <Col className="p-3 d-flex align-items-center justify-content-center">
                   <Link
                     to={{ pathname: "/artworkForm", state: { data: null } }}
                   >

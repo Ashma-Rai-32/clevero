@@ -73,7 +73,7 @@ const ArtworkView = () => {
                   >
                     <Col md="5">Artist</Col>
                     <Col auto>
-                      {data.displayName ? data.displayName : "Unassigned"}
+                      {data.artistNames ? data.artistNames : "Unassigned"}
                     </Col>
                   </Row>
                   <Row

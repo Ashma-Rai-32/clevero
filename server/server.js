@@ -107,51 +107,8 @@ app.delete("/artist/:id", (req, res) => {
 // ***********ARTWORK HTTP METHODS***********
 
 app.get("/artwork", (req, res) => {
-  //   var artistData= http.request({host:'localhost',
-  // port:8081,
-  // path:'/artistxartwork/'+})
-  const sql = "SELECT `ArtworkId` FROM `artwork`";
-  var artworkIdArray = [];
-  artworkIdArray = db.query(sql, (err, result) => {
-    if (err) return res.json({ Message: "SERVER ERROR" });
-    return res.json(result);
-  });
-  console.log("artworkIdArray", artworkIdArray);
-  var output = [];
-  for (let index = 0; index < artworkIdArray.length; index++) {
-    const element = artworkIdArray[index];
-    const sql = "SELECT * FROM `artwork` where `ArtworkId`=?";
-    var artworkArray = db.query(sql, [element.ArtworkId], (err, result) => {
-      if (err) return res.json({ Message: "SERVER ERROR" });
-      return res.json(result);
-    });
-    console.log(artworkArray);
-
-    const sqlTemp =
-      "SELECT * FROM `artistxartwork` artistxartworkObject right outer JOIN  `artist` artistObject on `ArtworkId`=? && artistxartworkObject.`ConstituentId`=artistObject.ConstituentId";
-    var artistArray = db.query(sql, [element.ArtworkId], (err, result) => {
-      if (err) return res.json({ Message: "SERVER ERROR" });
-      return res.json(result);
-    });
-    output = output + json(artworkArray, artistArray);
-  }
-  return output;
-
-  artworkIdArray.forEach((e) => {
-    const sql = "SELECT * FROM `artwork` where `ArtworkId`=?";
-    var artworkArray = db.query(sql, [e.ArtworkId], (err, result) => {
-      if (err) return res.json({ Message: "SERVER ERROR" });
-      return res.json(result);
-    });
-
-    const sqlTemp =
-      "SELECT * FROM `artistxartwork` artistxartworkObject right outer JOIN  `artist` artistObject on `ArtworkId`=? && artistxartworkObject.`ConstituentId`=artistObject.ConstituentId";
-    var artistArray = db.query(sql, [e.ArtworkId], (err, result) => {
-      if (err) return res.json({ Message: "SERVER ERROR" });
-      return res.json(result);
-    });
-    output = output + json(artworkArray + artistArray);
-  });
+  const sql =
+    "SELECT GROUP_CONCAT(artistobj.ConstituentId) as ConstituentIds, GROUP_CONCAT(artistobj.DisplayName) AS artistNames, GROUP_CONCAT(artistobj.Nationality) AS nationalities,artworkobj.* FROM artwork artworkobj LEFT JOIN artistxartwork axa ON artworkobj.artworkId = axa.artworkId LEFT JOIN artist artistobj ON axa.ConstituentId = artistobj.ConstituentId GROUP BY artworkobj.artworkId;";
 
   db.query(sql, (err, result) => {
     if (err) return res.json({ Message: "SERVER ERROR" });
@@ -161,10 +118,9 @@ app.get("/artwork", (req, res) => {
 
 app.post("/artwork", (req, res) => {
   const sql =
-    "INSERT INTO `artwork`(`Title`, `ConstituentId`, `Date`, `Medium`, `Dimensions`, `CreditLine`, `AccessionNumber`, `Classification`, `Department`, `DateAcquired`, `SeatHeight`, `Catalogued`, `ObjectId`, `Url`, `ThumbnailUrl`, `Circumference`, `Depth`, `Diameter`, `Height`, `Length`, `Weight`, `Width`, `Duration`) VALUES (?)";
+    "INSERT INTO `artwork`(`Title`, `Date`, `Medium`, `Dimensions`, `CreditLine`, `AccessionNumber`, `Classification`, `Department`, `DateAcquired`, `SeatHeight`, `Catalogued`, `ObjectId`, `Url`, `ThumbnailUrl`, `Circumference`, `Depth`, `Diameter`, `Height`, `Length`, `Weight`, `Width`, `Duration`) VALUES (?)";
   const values = [
     req.body.title,
-    req.body.constituentId,
     req.body.date,
     req.body.medium,
     req.body.dimensions,
@@ -188,59 +144,126 @@ app.post("/artwork", (req, res) => {
     req.body.duration,
   ];
 
-  db.query(sql, [values], (err, result) => {
-    if (err) return res.json(err);
-    return res.json(result);
+  const bridgeSql =
+    "INSERT INTO `artistxartwork`(`ConstituentId`, `ArtworkId`) VALUES (?)";
+
+  db.query(sql, [values], (artworkErr, artworkResult) => {
+    if (artworkErr) {
+      return res.json(artworkErr);
+    }
+    const artworkId = artworkResult.insertId;
+    const bridgeValues = [req.body.constituentId, artworkId];
+    db.query(bridgeSql, [bridgeValues], (bridgeErr, bridgeResult) => {
+      if (bridgeErr) {
+        return res.json(bridgeErr);
+      }
+
+      return res.json({
+        artwork: artworkResult,
+        bridge: bridgeResult,
+      });
+    });
   });
 });
 
 app.put("/artwork/:id", (req, res) => {
-  const sql =
-    "UPDATE `artwork` SET `Title`=?,`ConstituentId`=?,`Date`=?,`Medium`=?,`Dimensions`=?,`CreditLine`=?,`AccessionNumber`=?,`Classification`=?,`Department`=?,`DateAcquired`=?,`SeatHeight`=?,`Catalogued`=?,`ObjectId`=?,`Url`=?,`ThumbnailUrl`=?,`Circumference`=?,`Depth`=?,`Diameter`=?,`Height`=?,`Length`=?,`Weight`=?,`Width`=?,`Duration`=? WHERE  `ArtworkId`=?";
+  const updateArtworkSql =
+    "UPDATE `artwork` SET `Title`=?,`Date`=?,`Medium`=?,`Dimensions`=?,`CreditLine`=?,`AccessionNumber`=?,`Classification`=?,`Department`=?,`DateAcquired`=?,`SeatHeight`=?,`Catalogued`=?,`ObjectId`=?,`Url`=?,`ThumbnailUrl`=?,`Circumference`=?,`Depth`=?,`Diameter`=?,`Height`=?,`Length`=?,`Weight`=?,`Width`=?,`Duration`=? WHERE  `ArtworkId`=?";
   const id = req.params.id;
+  const updateBridgeSql =
+    "UPDATE `artistxartwork` set `ConstituentId`=? where `ArtworkId`=?";
 
-  db.query(
-    sql,
-    [
-      req.body.title,
-      req.body.constituentId,
-      req.body.date,
-      req.body.medium,
-      req.body.dimensions,
-      req.body.creditLine,
-      req.body.accessionNumber,
-      req.body.classification,
-      req.body.department,
-      req.body.dateAcquired,
-      req.body.seatHeight,
-      req.body.catalogued,
-      req.body.objectId,
-      req.body.url,
-      req.body.thumbnailUrl,
-      req.body.circumference,
-      req.body.depth,
-      req.body.diameter,
-      req.body.height,
-      req.body.length,
-      req.body.weight,
-      req.body.width,
-      req.body.duration,
-      id,
-    ],
-    (err, result) => {
-      if (err) return res.json(err);
-      return res.json(result);
+  db.beginTransaction((err) => {
+    if (err) {
+      return res.json(err);
     }
-  );
+
+    db.query(
+      updateArtworkSql,
+      [
+        req.body.title,
+        req.body.date,
+        req.body.medium,
+        req.body.dimensions,
+        req.body.creditLine,
+        req.body.accessionNumber,
+        req.body.classification,
+        req.body.department,
+        req.body.dateAcquired,
+        req.body.seatHeight,
+        req.body.catalogued,
+        req.body.objectId,
+        req.body.url,
+        req.body.thumbnailUrl,
+        req.body.circumference,
+        req.body.depth,
+        req.body.diameter,
+        req.body.height,
+        req.body.length,
+        req.body.weight,
+        req.body.width,
+        req.body.duration,
+        id,
+      ],
+      (artworkErr, artworkResult) => {
+        if (artworkErr) {
+          db.rollback(() => {
+            return res.json(artworkErr);
+          });
+        }
+
+        db.query(
+          updateBridgeSql,
+          [req.body.constituentId, id],
+          (bridgeErr, bridgeResult) => {
+            if (bridgeErr) {
+              db.rollback(() => {
+                return res.json(bridgeErr);
+              });
+            } else {
+              db.commit((commitErr) => {
+                if (commitErr)
+                  db.rollback(() => {
+                    return res.json(commitErr);
+                  });
+              });
+              return res.json("SUCCESSFUL");
+            }
+          }
+        );
+      }
+    );
+  });
 });
 
 app.delete("/artwork/:id", (req, res) => {
-  const sql = "DELETE FROM `artwork` WHERE ArtworkId =?";
   const id = req.params.id;
-  db.query(sql, [id], (err, result) => {
-    if (err) return res.json({ Message: "SERVER ERROR" });
-    return res.json(result);
-  });
+  if (id != undefined) {
+    db.beginTransaction((err) => {
+      if (err) {
+        return res.json(err);
+      }
+      const deleteEntryOnBridgeSql =
+        "DELETE FROM `artistxartwork` where ArtworkId=?";
+
+      db.query(deleteEntryOnBridgeSql, [id], (err, resultBridge) => {
+        if (err) {
+          db.rollback(() => {
+            return res.json(err);
+          });
+        }
+
+        const deleteArtworkSql = "DELETE FROM `artwork` where ArtworkId=?";
+        db.query(deleteArtworkSql, [id], (err, resultArtwork) => {
+          if (err) {
+            db.rollback(() => {
+              return res.json(err);
+            });
+          } else return res.json("SUCCESSFUL");
+        });
+      });
+    });
+  } else return res.json("FAILED");
 });
 
 app.listen(8081, () => {
