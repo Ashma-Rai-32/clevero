@@ -22,8 +22,6 @@ import axios from "axios";
 import Datetime from "react-datetime";
 import moment from "moment";
 import { useLocation, useNavigate } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import "../custom.css";
 import "react-datetime/css/react-datetime.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faCirclePlus } from "@fortawesome/free-solid-svg-icons";

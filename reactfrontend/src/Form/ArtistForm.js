@@ -22,8 +22,6 @@ import axios from "axios";
 import Datetime from "react-datetime";
 import moment from "moment";
 import { useLocation, useNavigate } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import "../custom.css";
 import "react-datetime/css/react-datetime.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faCirclePlus } from "@fortawesome/free-solid-svg-icons";
@@ -470,6 +468,11 @@ const ArtistForm = () => {
                       // console.log("url", url);
                       // console.log("thumbnailUrl", thumbnailUrl);
                       console.log("gender", selectedGender);
+                      console.log("displayName", displayName);
+                      console.log("artistBio", artistBio);
+                      console.log("ulan", ulan);
+                      console.log("wikiQid", wikiQid);
+                      console.log("nationality", nationality);
                       console.log(
                         "begindate",
                         moment(beginDate).format("YYYY-MM-DD HH:mm:ss.sss")
@@ -500,7 +503,6 @@ const ArtistForm = () => {
                               endDate: moment(endDate).format(
                                 "YYYY-MM-DD HH:mm:ss.sss"
                               ),
-
                               wikiQid: wikiQid,
                               ulan: ulan,
                             })
@@ -536,17 +538,17 @@ const ArtistForm = () => {
                             )
                             .then((res) => {
                               if (res.status >= 200 && res.status < 300) {
-                                // navigate("/artworkView", {
-                                //   state: {
-                                //     item: {
-                                //       title: title,
-                                //       constituentId: selectedConstituentId,
-                                //       url: url,
-                                //       thumbnailUrl: thumbnailUrl,
-                                //       date: date,
-                                //     },
-                                //   },
-                                // });
+                                navigate("/artist", {
+                                  // state: {
+                                  //   item: {
+                                  //     title: title,
+                                  //     constituentId: selectedConstituentId,
+                                  //     url: url,
+                                  //     thumbnailUrl: thumbnailUrl,
+                                  //     date: date,
+                                  //   },
+                                  //},
+                                });
                                 console.log("Success");
                               } else {
                                 console.log("Error Updating artwork");
