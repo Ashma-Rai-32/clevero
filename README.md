@@ -1,6 +1,6 @@
-#CLEVERO ASSIGNMENT SUBMISSION
+# CLEVERO ASSIGNMENT SUBMISSION
 
-##Installation
+### Installation
 
 1. Clone repository: ''
 2. Navigate: `cd server`
