@@ -11,3 +11,12 @@
 3. Navigate: `cd reactfrontend`
 
 - Install dependencies and run
+
+### Database
+
+Hosted on db4free.net
+[Database Details](./Dataset/ERD_artistartwork.pdf)
+
+### ERD
+
+![ERD](./Dataset/ERD.jpg)
