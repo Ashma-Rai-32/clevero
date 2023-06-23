@@ -14,9 +14,12 @@
 
 ### Database
 
-Hosted on db4free.net
-[Database Details](./Dataset/ERD_artistartwork.pdf)
+Hosted on `https://db4free.net/phpMyAdmin/`
+username: `artistartwork`
+password: `password123`
+Database Name: `clevero_artdb`
+Database Details: [Database Document](./Dataset/ERD_artistartwork.pdf)
 
-### ERD
+#### ERD
 
 ![ERD](./Dataset/ERD.jpg)
