@@ -384,7 +384,7 @@ const ArtworkForm = () => {
                           axios
                             .post("http://localhost:8081/artwork", {
                               title: title,
-                              constituentIds: selectedConstituentId,
+                              constituentId: selectedConstituentId,
                               url: url,
                               thumbnailUrl: thumbnailUrl,
                               date: moment(date).format(

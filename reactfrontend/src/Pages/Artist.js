@@ -132,6 +132,17 @@ const ManageTable = (props) => {
                                   Edit
                                 </Button>
                               </Col>
+                              {/* <Col className="p-1 px-2">
+                                <Button
+                                  color="danger"
+                                  style={{ width: "100%" }}
+                                  onClick={() => {
+                                    handleDelete(item);
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              </Col> */}
                             </Row>
                           </td>
                         </tr>

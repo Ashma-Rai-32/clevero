@@ -107,39 +107,20 @@ app.put("/artist/:id", (req, res) => {
 });
 
 app.delete("/artist/:id", (req, res) => {
-  const axaSql = "DELETE FROM `artistxartwork` WHERE `ConstituentId` =?";
-  const bridegSql = "DELETE FROM `artist` WHERE `ConstituentId` =?";
+  const sql = "DELETE FROM `artist` WHERE `ConstituentId`=?";
   const id = req.params.id;
 
   db.beginTransaction((err) => {
     if (err) return res.json(err);
-    db.query(sql, id, (axaError, axaResult) => {
-      if (axaError) {
+    db.query(sql, [id], (err, res) => {
+      if (err) {
         db.rollback(() => {
-          return res.json(axaError);
+          return res.json(err);
         });
+      } else {
+        return res.json("SUCCESSFUL");
       }
-
-      db.query(bridegSql, id, (bridgeErr, bridgeResult) => {
-        if (bridgeErr) {
-          db.rollback(() => {
-            return res.json(bridgeErr);
-          });
-        } else {
-          db.commit((commitErr) => {
-            if (commitErr)
-              db.rollback(() => {
-                return res.json(commitErr);
-              });
-          });
-          return res.json("SUCCESSFUL");
-        }
-      });
     });
-  });
-  db.query(sql, [id], (err, result) => {
-    if (err) return res.json({ Message: "SERVER ERROR" });
-    return res.json(result);
   });
 });
 

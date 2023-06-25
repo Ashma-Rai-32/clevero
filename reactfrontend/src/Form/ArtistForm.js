@@ -459,8 +459,8 @@ const ArtistForm = () => {
 
                     <Input
                       id="ulan"
-                      placeholder="e.g. E1234"
-                      type="text"
+                      placeholder="e.g. 531234"
+                      type="number"
                       required
                       maxLength={255}
                       defaultValue={ulan}
@@ -482,17 +482,21 @@ const ArtistForm = () => {
                 <Col>
                   <Button
                     onClick={() => {
-                      console.log("displayName", displayName);
-                      console.log("artistBio", artistBio);
-                      console.log("nationality", nationality);
-                      console.log("gender", selectedGender);
-                      console.log("wikiQid", wikiQid);
-                      console.log("ulan", ulan);
                       console.log(
+                        "displayName",
+                        displayName,
+                        "artistBio",
+                        artistBio,
+                        "nationality",
+                        nationality,
+                        "gender",
+                        selectedGender,
+                        "wikiQid",
+                        wikiQid,
+                        "ulan",
+                        ulan,
                         "begindate",
-                        moment(beginDate).format("YYYY-MM-DD HH:mm:ss.sss")
-                      );
-                      console.log(
+                        moment(beginDate).format("YYYY-MM-DD HH:mm:ss.sss"),
                         "endDate",
                         moment(endDate).format("YYYY-MM-DD HH:mm:ss.sss")
                       );
@@ -513,7 +517,7 @@ const ArtistForm = () => {
                               displayName: displayName,
                               artistBio: artistBio,
                               nationality: nationality,
-                              gender: selectedGender,
+                              gender: selectedGender ? 1 : 0,
                               beginDate: moment(beginDate).format(
                                 "YYYY-MM-DD HH-mm-ss.sss"
                               ),
@@ -525,9 +529,9 @@ const ArtistForm = () => {
                             })
                             .then((res) => {
                               if (res.status >= 200 && res.status < 300) {
-                                console.log("Success");
                                 setAlertState(false);
                                 navigate("/artist");
+                                //window.location.reload();
                               } else {
                                 console.log("Error creating artist");
                               }
