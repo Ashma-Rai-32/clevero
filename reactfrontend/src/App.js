@@ -1,16 +1,30 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import Artist from "./Pages/Artist";
 import ArtistForm from "./Form/ArtistForm";
 import Artwork from "./Pages/Artwork";
 import ArtworkForm from "./Form/ArtworkForm";
 import ArtworkView from "./View/ArtworkView";
+import { Nav, NavItem, NavLink, Navbar, NavbarBrand } from "reactstrap";
+import Header from "./components/Header";
 
 function App() {
+  // const location = useLocation();
+  // const currentRoute = location.pathname;
+  // console.log(currentRoute);
   return (
     <>
       <BrowserRouter>
+        <div className="d-flex justify-content-center">
+          <Header />
+        </div>
         <Routes>
           <Route path="/" element={<Navigate replace to="/artwork" />} />
           <Route path="/artist" element={<Artist />} />

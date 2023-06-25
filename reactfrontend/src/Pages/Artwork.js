@@ -14,6 +14,7 @@ import { NavLink, Navigate, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Container } from "reactstrap";
 import moment from "moment";
+import { MoonLoader } from "react-spinners";
 
 const ManageTable = (props) => {
   const data = props.state;
@@ -246,7 +247,13 @@ class Artwork extends React.Component {
               </Row>
             </CardHeader>
             <CardBody>
-              {this.state.data && <ManageTable state={this.state.data} />}
+              {this.state.data ? (
+                <ManageTable state={this.state.data} />
+              ) : (
+                <div className="d-flex justify-content-center align-items-center">
+                  <MoonLoader color="#767676" size={30} />
+                </div>
+              )}
             </CardBody>
           </Card>
         </Container>
