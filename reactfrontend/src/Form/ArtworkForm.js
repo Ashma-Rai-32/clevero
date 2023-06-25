@@ -33,7 +33,7 @@ const ArtworkForm = () => {
   const navigate = useNavigate();
   const [alertState, setAlertState] = React.useState(false);
 
-  // artworkId
+  // init artworkId
   const [artworkId, setArtworkId] = React.useState(null);
 
   // title
@@ -384,7 +384,7 @@ const ArtworkForm = () => {
                           axios
                             .post("http://localhost:8081/artwork", {
                               title: title,
-                              constituentId: selectedConstituentId,
+                              constituentIds: selectedConstituentId,
                               url: url,
                               thumbnailUrl: thumbnailUrl,
                               date: moment(date).format(
@@ -396,6 +396,7 @@ const ArtworkForm = () => {
                                 console.log("Success");
                                 setAlertState(false);
                                 navigate("/artwork");
+                                window.location.reload();
                               } else {
                                 console.log("Error creating artwork");
                               }
@@ -424,6 +425,53 @@ const ArtworkForm = () => {
                                       url: url,
                                       thumbnailUrl: thumbnailUrl,
                                       date: date,
+                                      artistNames: artistName,
+                                      artworkId:
+                                        state == null ? null : state.artworkId,
+                                      nationalities: state.nationalities,
+                                      medium: state.medium,
+                                      dimensions:
+                                        state == null ? null : state.dimensions,
+                                      creditLine:
+                                        state == null ? null : state.creditLine,
+                                      accessionNumber:
+                                        state == null
+                                          ? null
+                                          : state.accessionNumber,
+                                      classification:
+                                        state == null
+                                          ? null
+                                          : state.classification,
+                                      department:
+                                        state == null ? null : state.department,
+                                      dateAcquired:
+                                        state == null
+                                          ? null
+                                          : state.dateAcquired,
+                                      seatHeight:
+                                        state == null ? null : state.seatHeight,
+                                      catalogued:
+                                        state == null ? null : state.catalogued,
+                                      objectId:
+                                        state == null ? null : state.objectId,
+                                      circumference:
+                                        state == null
+                                          ? null
+                                          : state.circumference,
+                                      depth: state == null ? null : state.depth,
+                                      diameter:
+                                        state == null ? null : state.diameter,
+                                      height:
+                                        state == null ? null : state.height,
+                                      length:
+                                        state == null ? null : state.length,
+                                      weight:
+                                        state == null ? null : state.weight,
+                                      width: state == null ? null : state.width,
+                                      duration:
+                                        state == null ? null : state.duration,
+                                      length:
+                                        state == null ? null : state.length,
                                     },
                                   },
                                 });

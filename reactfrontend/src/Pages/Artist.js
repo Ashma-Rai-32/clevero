@@ -23,7 +23,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const ManageTable = (props) => {
   const data = props.state;
   const navigate = useNavigate();
-  const pageSize = 3;
+  const pageSize = 10;
   const [prevPageIndex, setPrevPageIndex] = React.useState(0);
 
   const handlePrevPage = (event) => {
@@ -110,17 +110,17 @@ const ManageTable = (props) => {
                           <td className="hidden">{item.nationality}</td>
                           <td>
                             <Row>
-                              {/* <Col className="p-1 px-2 ">
-                            <Button
-                              color="primary"
-                              style={{ width: "100%" }}
-                              onClick={() => {
-                                handleView(item);
-                              }}
-                            >
-                              View
-                            </Button>
-                          </Col> */}
+                              <Col className="p-1 px-2 ">
+                                <Button
+                                  color="primary"
+                                  style={{ width: "100%" }}
+                                  onClick={() => {
+                                    handleView(item);
+                                  }}
+                                >
+                                  View
+                                </Button>
+                              </Col>
                               <Col className="p-1 px-2">
                                 <Button
                                   color="warning"

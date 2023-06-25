@@ -17,6 +17,16 @@ const db = mysql.createConnection({
 });
 
 // ***********ARTIST X ARTWORK HTTP METHODS***********
+app.get("/artistSpecificArtwork/:id", (req, res) => {
+  const sql =
+    "SELECT a.* FROM `artistxartwork` axa right join `artwork` a on axa.ArtworkId=a.ArtworkId WHERE `ConstituentId`=?";
+
+  const artistId = req.params.id;
+  db.query(sql, [artistId], (err, result) => {
+    if (err) return res.json({ Message: "SERVER ERROR" });
+    return res.json(result);
+  });
+});
 
 app.get("/artistxartwork/", (req, res) => {
   // const sql =
@@ -97,8 +107,36 @@ app.put("/artist/:id", (req, res) => {
 });
 
 app.delete("/artist/:id", (req, res) => {
-  const sql = "DELETE FROM `artist` WHERE `ConstituentId` =?";
+  const axaSql = "DELETE FROM `artistxartwork` WHERE `ConstituentId` =?";
+  const bridegSql = "DELETE FROM `artist` WHERE `ConstituentId` =?";
   const id = req.params.id;
+
+  db.beginTransaction((err) => {
+    if (err) return res.json(err);
+    db.query(sql, id, (axaError, axaResult) => {
+      if (axaError) {
+        db.rollback(() => {
+          return res.json(axaError);
+        });
+      }
+
+      db.query(bridegSql, id, (bridgeErr, bridgeResult) => {
+        if (bridgeErr) {
+          db.rollback(() => {
+            return res.json(bridgeErr);
+          });
+        } else {
+          db.commit((commitErr) => {
+            if (commitErr)
+              db.rollback(() => {
+                return res.json(commitErr);
+              });
+          });
+          return res.json("SUCCESSFUL");
+        }
+      });
+    });
+  });
   db.query(sql, [id], (err, result) => {
     if (err) return res.json({ Message: "SERVER ERROR" });
     return res.json(result);
@@ -112,6 +150,16 @@ app.get("/artwork", (req, res) => {
     "SELECT GROUP_CONCAT(artistobj.ConstituentId) as ConstituentIds, GROUP_CONCAT(artistobj.DisplayName) AS artistNames, GROUP_CONCAT(artistobj.Nationality) AS nationalities,artworkobj.* FROM artwork artworkobj LEFT JOIN artistxartwork axa ON artworkobj.artworkId = axa.artworkId LEFT JOIN artist artistobj ON axa.ConstituentId = artistobj.ConstituentId GROUP BY artworkobj.artworkId;";
 
   db.query(sql, (err, result) => {
+    if (err) return res.json({ Message: "SERVER ERROR" });
+    return res.json(result);
+  });
+});
+
+app.get("/artwork/:id", (req, res) => {
+  const sql =
+    "SELECT GROUP_CONCAT(artistobj.ConstituentId) as ConstituentIds, GROUP_CONCAT(artistobj.DisplayName) AS artistNames, GROUP_CONCAT(artistobj.Nationality) AS nationalities,artworkobj.* FROM artwork artworkobj LEFT JOIN artistxartwork axa ON artworkobj.artworkId = axa.artworkId LEFT JOIN artist artistobj ON axa.ConstituentId = artistobj.ConstituentId WHERE artworkobj.ArtworkId=? GROUP BY artworkobj.artworkId;";
+  const id = req.params.id;
+  db.query(sql, [id], (err, result) => {
     if (err) return res.json({ Message: "SERVER ERROR" });
     return res.json(result);
   });

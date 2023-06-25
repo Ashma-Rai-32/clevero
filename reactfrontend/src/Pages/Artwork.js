@@ -23,7 +23,7 @@ const ManageTable = (props) => {
   const data = props.state;
   console.log("state.data inside maanga", data);
   const navigate = useNavigate();
-  const pageSize = 3;
+  const pageSize = 10;
   const [prevPageIndex, setPrevPageIndex] = React.useState(0);
 
   const handlePrevPage = (event) => {

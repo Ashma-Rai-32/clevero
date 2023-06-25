@@ -14,6 +14,7 @@ import ArtworkForm from "./Form/ArtworkForm";
 import ArtworkView from "./View/ArtworkView";
 import { Nav, NavItem, NavLink, Navbar, NavbarBrand } from "reactstrap";
 import Header from "./components/Header";
+import ArtistView from "./View/ArtistView";
 
 function App() {
   // const location = useLocation();
@@ -22,13 +23,15 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <div className="d-flex justify-content-center">
+        <div className="d-flex justify-content-right mx-5 pl-3">
           <Header />
         </div>
         <Routes>
           <Route path="/" element={<Navigate replace to="/artwork" />} />
           <Route path="/artist" element={<Artist />} />
           <Route path="/artistForm" element={<ArtistForm />} />
+          <Route path="/artistView" element={<ArtistView />} />
+
           <Route path="/artwork" element={<Artwork />} />
           <Route path="/artworkForm" element={<ArtworkForm />} />
           <Route path="/artworkView" element={<ArtworkView />} />
