@@ -223,7 +223,7 @@ const ArtistForm = () => {
 
                     <Input
                       id="artistBio"
-                      placeholder="e.g. Ruth Asawa"
+                      placeholder="Short Bio on the artist"
                       type="textarea"
                       required
                       maxLength={800}
@@ -254,7 +254,7 @@ const ArtistForm = () => {
 
                     <Input
                       id="nationality"
-                      placeholder="e.g. Ruth Asawa"
+                      placeholder="e.g. UK"
                       type="text"
                       required
                       maxLength={255}
