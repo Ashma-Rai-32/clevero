@@ -14,6 +14,7 @@ import { NavLink, Navigate, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Container } from "reactstrap";
 import moment from "moment";
+import { MoonLoader } from "react-spinners";
 
 const ManageTable = (props) => {
   const data = props.state;
@@ -36,6 +37,7 @@ const ManageTable = (props) => {
       .delete(`http://localhost:8081/artist/${item.artistId}`)
       .then((res) => {
         console.log("Deleted", res);
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error Deleting data", error);
@@ -47,7 +49,7 @@ const ManageTable = (props) => {
       <div>
         {data && (
           <>
-            <Table responsive="true">
+            <Table responsive="true" hover>
               <thead>
                 <tr>
                   <th>S.N.</th>
@@ -175,7 +177,13 @@ class artist extends React.Component {
               </Row>
             </CardHeader>
             <CardBody>
-              {this.state.data && <ManageTable state={this.state.data} />}
+              {this.state.data ? (
+                <ManageTable state={this.state.data} />
+              ) : (
+                <div className="d-flex justify-content-center align-items-center">
+                  <MoonLoader color="#767676" size={30} />
+                </div>
+              )}
             </CardBody>
           </Card>
         </Container>

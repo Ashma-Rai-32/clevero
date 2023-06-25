@@ -17,6 +17,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
+  Alert,
 } from "reactstrap";
 import axios from "axios";
 import Datetime from "react-datetime";
@@ -30,6 +31,7 @@ const ArtistForm = () => {
   const location = useLocation();
   const state = location != null ? location.state : null;
   const navigate = useNavigate();
+  const [alertState, setAlertState] = React.useState(false);
 
   // artworkId
   const [constituentId, setConstituentId] = React.useState(null);
@@ -44,13 +46,13 @@ const ArtistForm = () => {
   const [artistBio, setartistBio] = React.useState(null);
   const [checkartistBio, setCheckartistBio] = React.useState("invalid");
   const [artistBioValidationError, setartistBioValidationError] =
-    React.useState("Please enter a valid artistBio.");
+    React.useState("Please enter a valid bio  .");
 
   // nationality
   const [nationality, setnationality] = React.useState(null);
   const [checknationality, setChecknationality] = React.useState("invalid");
   const [nationalityValidationError, setnationalityValidationError] =
-    React.useState("Please enter a valid thumbnail url.");
+    React.useState("Please enter a valid nationality.");
 
   // gender
   const genderDropDownData = [
@@ -65,10 +67,10 @@ const ArtistForm = () => {
   // beginDate
   const [beginDate, setbeginDate] = React.useState(null);
   const [beginDatePlaceholder, setbeginDatePlaceholder] =
-    React.useState("Select beginDate");
+    React.useState("Select begin date");
   const [checkbeginDate, setCheckbeginDate] = React.useState("invalid");
   const [beginDateValidationError, setbeginDateValidationError] =
-    React.useState("Please enter a valid thumbnail beginDate.");
+    React.useState("Please enter a valid begin date.");
   const [isOpenBeginDate, setIsOpenBeginDate] = React.useState(false);
 
   const handleBlurBeginDate = () => {
@@ -80,10 +82,10 @@ const ArtistForm = () => {
   // endDate
   const [endDate, setendDate] = React.useState(null);
   const [endDatePlaceholder, setendDatePlaceholder] =
-    React.useState("Select endDate");
+    React.useState("Select end date");
   const [checkendDate, setCheckendDate] = React.useState("invalid");
   const [endDateValidationError, setendDateValidationError] = React.useState(
-    "Please enter a valid thumbnail date."
+    "Please enter a valid end date."
   );
   const [isOpenEndDate, setIsOpenEndDate] = React.useState(false);
 
@@ -97,13 +99,13 @@ const ArtistForm = () => {
   const [wikiQid, setwikiQid] = React.useState(null);
   const [checkwikiQid, setCheckwikiQid] = React.useState("invalid");
   const [wikiQidValidationError, setwikiQidValidationError] = React.useState(
-    "Please enter a valid thumbnail url."
+    "Please enter a valid Wiki QID."
   );
   // ulan
   const [ulan, setulan] = React.useState(null);
   const [checkulan, setCheckulan] = React.useState("invalid");
   const [ulanValidationError, setulanValidationError] = React.useState(
-    "Please enter a valid thumbnail url."
+    "Please enter a valid ULAN."
   );
 
   //init
@@ -120,6 +122,7 @@ const ArtistForm = () => {
     if (state.gender) setgenderName("Male");
     else setgenderName("Female");
     setbeginDate(state.beginDate);
+    setbeginDatePlaceholder(moment(state.beginDate).format("YYYY-MM-DD"));
     setendDate(state.endDate);
     setwikiQid(state.wikiQid);
     setulan(state.ulan);
@@ -171,13 +174,20 @@ const ArtistForm = () => {
               </Row>
             </CardHeader>
             <CardBody>
-              {/* <ManageForm state={state}/> */}
+              {alertState ? (
+                <Row className="p-3">
+                  <Alert color="danger">
+                    Invalid Entry! Please enter valid answers only.
+                  </Alert>
+                </Row>
+              ) : null}
+
               <Row className="pt-2">
                 <Col lg="12">
                   {/* title */}
                   <FormGroup>
                     <label className="form-control-label" htmlFor="title">
-                      Artist Name
+                      Artist Name<span className="text-danger pl-1">*</span>
                     </label>
 
                     <Input
@@ -208,7 +218,7 @@ const ArtistForm = () => {
                   {/* artistBio */}
                   <FormGroup>
                     <label className="form-control-label" htmlFor="title">
-                      Artist Bio
+                      Artist Bio<span className="text-danger pl-1">*</span>
                     </label>
 
                     <Input
@@ -239,7 +249,7 @@ const ArtistForm = () => {
                   {/* Nationality */}
                   <FormGroup>
                     <label className="form-control-label" htmlFor="title">
-                      Nationality
+                      Nationality<span className="text-danger pl-1">*</span>
                     </label>
 
                     <Input
@@ -267,7 +277,7 @@ const ArtistForm = () => {
                 <Col lg="6">
                   {/* gender dropdown */}
                   <label className="form-control-label" htmlFor="gender">
-                    Gender <span className="text-danger">*</span>
+                    Gender<span className="text-danger pl-1">*</span>
                   </label>
                   {/* <Row>
                     <Col> */}
@@ -317,7 +327,7 @@ const ArtistForm = () => {
                 <Col lg="6">
                   <FormGroup>
                     <label className="form-control-label" htmlFor="beginDate">
-                      Begin Date<span className="text-danger">*</span>
+                      Begin Date<span className="text-danger pl-1">*</span>
                     </label>
                     <InputGroup className="input-group-alternative">
                       <InputGroupAddon addonType="prepend">
@@ -339,10 +349,15 @@ const ArtistForm = () => {
                         dateFormat="YYYY-MM-DD"
                         timeFormat={false}
                         utc={true}
-                        defaultValue={beginDate}
+                        value={
+                          beginDate == null
+                            ? null
+                            : moment(beginDate).format("YYYY-MM-DD")
+                        }
                         isInvalid={checkbeginDate === "invalid"}
                         onChange={(e) => {
                           setbeginDate(moment(e).format());
+                          // setbeginDatePlaceholder(moment(e).format());
                           if (moment(e).format() === null) {
                             setCheckbeginDate("invalid");
                           } else setCheckbeginDate("valid");
@@ -361,7 +376,7 @@ const ArtistForm = () => {
                 <Col lg="6">
                   <FormGroup>
                     <label className="form-control-label" htmlFor="endDate">
-                      End Date<span className="text-danger">*</span>
+                      End Date<span className="text-danger pl-1">*</span>
                     </label>
                     <InputGroup className="input-group-alternative">
                       <InputGroupAddon addonType="prepend">
@@ -383,7 +398,11 @@ const ArtistForm = () => {
                         dateFormat="YYYY-MM-DD"
                         timeFormat={false}
                         utc={true}
-                        defaultValue={endDate}
+                        value={
+                          endDate == null
+                            ? null
+                            : moment(endDate).format("YYYY-MM-DD")
+                        }
                         isInvalid={checkendDate === "invalid"}
                         onChange={(e) => {
                           setendDate(moment(e).format());
@@ -407,7 +426,7 @@ const ArtistForm = () => {
                   {/* wikiQid */}
                   <FormGroup>
                     <label className="form-control-label" htmlFor="title">
-                      Wiki QID
+                      Wiki QID<span className="text-danger pl-1">*</span>
                     </label>
 
                     <Input
@@ -435,7 +454,7 @@ const ArtistForm = () => {
                   {/* ulan */}
                   <FormGroup>
                     <label className="form-control-label" htmlFor="title">
-                      ULAN
+                      ULAN<span className="text-danger pl-1">*</span>
                     </label>
 
                     <Input
@@ -453,7 +472,7 @@ const ArtistForm = () => {
                     />
                     {checkulan === "invalid" && (
                       <div className="invalid-feedback d-block">
-                        {nationalityValidationError}
+                        {ulanValidationError}
                       </div>
                     )}
                   </FormGroup>
@@ -478,7 +497,10 @@ const ArtistForm = () => {
                         moment(beginDate).format("YYYY-MM-DD HH:mm:ss.sss")
                       );
 
-                      console.log("endDate", endDate);
+                      console.log(
+                        "endDate",
+                        moment(endDate).format("YYYY-MM-DD HH:mm:ss.sss")
+                      );
 
                       if (
                         checkartistBio === "valid" &&
@@ -509,6 +531,7 @@ const ArtistForm = () => {
                             .then((res) => {
                               if (res.status >= 200 && res.status < 300) {
                                 console.log("Success");
+                                setAlertState(false);
                                 navigate("/artist");
                               } else {
                                 console.log("Error creating artist");
@@ -538,17 +561,8 @@ const ArtistForm = () => {
                             )
                             .then((res) => {
                               if (res.status >= 200 && res.status < 300) {
-                                navigate("/artist", {
-                                  // state: {
-                                  //   item: {
-                                  //     title: title,
-                                  //     constituentId: selectedConstituentId,
-                                  //     url: url,
-                                  //     thumbnailUrl: thumbnailUrl,
-                                  //     date: date,
-                                  //   },
-                                  //},
-                                });
+                                setAlertState(false);
+                                navigate("/artist");
                                 console.log("Success");
                               } else {
                                 console.log("Error Updating artwork");
@@ -559,6 +573,7 @@ const ArtistForm = () => {
                             });
                         }
                       } else {
+                        setAlertState(true);
                         console.log("Invalid Entries");
                       }
                     }}

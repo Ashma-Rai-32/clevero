@@ -17,6 +17,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
+  Alert,
 } from "reactstrap";
 import axios from "axios";
 import Datetime from "react-datetime";
@@ -30,6 +31,7 @@ const ArtworkForm = () => {
   const location = useLocation();
   const state = location != null ? location.state : null;
   const navigate = useNavigate();
+  const [alertState, setAlertState] = React.useState(false);
 
   // artworkId
   const [artworkId, setArtworkId] = React.useState(null);
@@ -153,13 +155,20 @@ const ArtworkForm = () => {
               </Row>
             </CardHeader>
             <CardBody>
-              {/* <ManageForm state={state}/> */}
+              {alertState ? (
+                <Row className="p-3">
+                  <Alert color="danger">
+                    Invalid Entry! Please enter valid answers only.
+                  </Alert>
+                </Row>
+              ) : null}
+
               <Row className="pt-2">
                 <Col lg="12">
                   {/* title */}
                   <FormGroup>
                     <label className="form-control-label" htmlFor="title">
-                      Artwork Title
+                      Artwork Title<span className="text-danger pl-1">*</span>
                     </label>
 
                     <Input
@@ -188,7 +197,7 @@ const ArtworkForm = () => {
                 <Col lg="12">
                   {/* artist dropdown */}
                   <label className="form-control-label" htmlFor="artist">
-                    Artist <span className="text-danger">*</span>
+                    Artist<span className="text-danger pl-1">*</span>
                   </label>
                   {/* <Row>
                     <Col> */}
@@ -237,7 +246,7 @@ const ArtworkForm = () => {
                   {/* url */}
                   <FormGroup>
                     <label className="form-control-label" htmlFor="url">
-                      Link<span className="text-danger">*</span>
+                      Link<span className="text-danger pl-1">*</span>
                     </label>
 
                     <Input
@@ -275,7 +284,7 @@ const ArtworkForm = () => {
                       htmlFor="thumbnailUrl"
                     >
                       Thumbnail url
-                      <span className="text-danger">*</span>
+                      <span className="text-danger pl-1">*</span>
                     </label>
 
                     <Input
@@ -309,7 +318,7 @@ const ArtworkForm = () => {
                 <Col lg="6">
                   <FormGroup>
                     <label className="form-control-label" htmlFor="date">
-                      Date<span className="text-danger">*</span>
+                      Date<span className="text-danger pl-1">*</span>
                     </label>
                     <InputGroup className="input-group-alternative">
                       <InputGroupAddon addonType="prepend">
@@ -331,9 +340,10 @@ const ArtworkForm = () => {
                         dateFormat="YYYY-MM-DD"
                         timeFormat={false}
                         utc={true}
-                        defaultValue={date}
+                        value={moment(date).format("YYYY-MM-DD")}
                         isInvalid={checkDate === "invalid"}
                         onChange={(e) => {
+                          setDatePlaceholder(moment(e).format());
                           setDate(moment(e).format());
                           if (moment(e).format() === null) {
                             setCheckDate("invalid");
@@ -384,6 +394,8 @@ const ArtworkForm = () => {
                             .then((res) => {
                               if (res.status >= 200 && res.status < 300) {
                                 console.log("Success");
+                                setAlertState(false);
+                                navigate("/artwork");
                               } else {
                                 console.log("Error creating artwork");
                               }
@@ -415,6 +427,8 @@ const ArtworkForm = () => {
                                     },
                                   },
                                 });
+                                setAlertState(false);
+
                                 console.log("Success");
                               } else {
                                 console.log("Error Updating artwork");
@@ -425,6 +439,7 @@ const ArtworkForm = () => {
                             });
                         }
                       } else {
+                        setAlertState(true);
                         console.log("Invalid Entries");
                       }
                     }}

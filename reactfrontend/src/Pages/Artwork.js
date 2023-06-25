@@ -45,6 +45,7 @@ const ManageTable = (props) => {
       .delete(`http://localhost:8081/artwork/${item.artworkId}`)
       .then((res) => {
         console.log("Deleted", res);
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error Deleting data", error);
