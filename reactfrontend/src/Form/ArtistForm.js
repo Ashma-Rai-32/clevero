@@ -482,21 +482,16 @@ const ArtistForm = () => {
                 <Col>
                   <Button
                     onClick={() => {
-                      // console.log("title", title);
-                      // console.log("date", date);
-                      // console.log("url", url);
-                      // console.log("thumbnailUrl", thumbnailUrl);
-                      console.log("gender", selectedGender);
                       console.log("displayName", displayName);
                       console.log("artistBio", artistBio);
-                      console.log("ulan", ulan);
-                      console.log("wikiQid", wikiQid);
                       console.log("nationality", nationality);
+                      console.log("gender", selectedGender);
+                      console.log("wikiQid", wikiQid);
+                      console.log("ulan", ulan);
                       console.log(
                         "begindate",
                         moment(beginDate).format("YYYY-MM-DD HH:mm:ss.sss")
                       );
-
                       console.log(
                         "endDate",
                         moment(endDate).format("YYYY-MM-DD HH:mm:ss.sss")
@@ -520,10 +515,10 @@ const ArtistForm = () => {
                               nationality: nationality,
                               gender: selectedGender,
                               beginDate: moment(beginDate).format(
-                                "YYYY-MM-DD HH:mm:ss.sss"
+                                "YYYY-MM-DD HH-mm-ss.sss"
                               ),
                               endDate: moment(endDate).format(
-                                "YYYY-MM-DD HH:mm:ss.sss"
+                                "YYYY-MM-DD HH-mm-ss.sss"
                               ),
                               wikiQid: wikiQid,
                               ulan: ulan,
